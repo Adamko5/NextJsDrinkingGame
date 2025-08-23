@@ -17,6 +17,8 @@ export interface Player {
 // The lobby holds a roster of players and a lookup from playerKey to player.
 export interface Lobby {
   code: string;
+  /** Current status of the lobby. Players may only join while in the 'lobby' state. */
+  status: 'lobby' | 'playing' | 'ended';
   players: Player[];
   playerKeyMap: Map<string, Player>;
 }
@@ -83,6 +85,9 @@ export function pickLanIp(): string {
 class LobbyManager {
   private currentLobby: Lobby | null = null;
 
+  /** A map of disconnect timers by playerId used to prune players after a grace period. */
+  private disconnectTimers: Map<string, NodeJS.Timeout> = new Map();
+
   /**
    * Create or return the existing lobby. The lobby code will remain the
    * same across requests to `/server/home` until the process restarts.
@@ -92,6 +97,7 @@ class LobbyManager {
     const code = generateLobbyCode();
     this.currentLobby = {
       code,
+      status: 'lobby',
       players: [],
       playerKeyMap: new Map(),
     };
@@ -124,6 +130,9 @@ class LobbyManager {
     if (!lobby) {
       throw new Error(`Lobby ${lobbyCode} does not exist`);
     }
+    if (lobby.status !== 'lobby') {
+      throw new Error('Lobby is not accepting new players');
+    }
     // If a rejoinKey matches, reattach to that player
     if (rejoinKey) {
       const existing = lobby.playerKeyMap.get(rejoinKey);
@@ -132,6 +141,12 @@ class LobbyManager {
         // Optionally update name/trait on rejoin if provided
         if (name) existing.name = name;
         if (trait) existing.trait = trait;
+        // cancel any pending removal timer
+        const timeout = this.disconnectTimers.get(existing.id);
+        if (timeout) {
+          clearTimeout(timeout);
+          this.disconnectTimers.delete(existing.id);
+        }
         return { player: existing, isRejoin: true };
       }
     }
@@ -161,7 +176,39 @@ class LobbyManager {
     const player = lobby.players.find((p) => p.id === playerId);
     if (player) {
       player.connected = false;
+      // schedule removal after 30s if not reconnected
+      const timeout = setTimeout(() => {
+        this.removePlayer(lobbyCode, playerId);
+      }, 30000);
+      this.disconnectTimers.set(playerId, timeout);
     }
+  }
+
+  /** Remove a player entirely from the lobby. Called after the grace timeout. */
+  private removePlayer(lobbyCode: string, playerId: string): void {
+    const lobby = this.getLobby(lobbyCode);
+    if (!lobby) return;
+    const index = lobby.players.findIndex((p) => p.id === playerId);
+    if (index !== -1) {
+      const player = lobby.players[index];
+      lobby.playerKeyMap.delete(player.playerKey);
+      lobby.players.splice(index, 1);
+    }
+    this.disconnectTimers.delete(playerId);
+  }
+
+  /** Flip the lobby into the playing state. No new players may join after this. */
+  startGame(lobbyCode: string): void {
+    const lobby = this.getLobby(lobbyCode);
+    if (lobby && lobby.status === 'lobby') {
+      lobby.status = 'playing';
+    }
+  }
+
+  /** Return the current status of the lobby. */
+  getStatus(lobbyCode: string): 'lobby' | 'playing' | 'ended' | undefined {
+    const lobby = this.getLobby(lobbyCode);
+    return lobby?.status;
   }
 
   /**
@@ -175,4 +222,12 @@ class LobbyManager {
   }
 }
 
-export const lobbyManager = new LobbyManager();
+// Ensure a single LobbyManager instance across possible module reloads or
+// duplicate bundling (Next.js can sometimes create separate module copies
+// in the dev server). Store the manager on `globalThis` to make it stable.
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  var __NEXT_LOBBY_MANAGER__: any;
+}
+
+export const lobbyManager: LobbyManager = (global as any).__NEXT_LOBBY_MANAGER__ || ((global as any).__NEXT_LOBBY_MANAGER__ = new LobbyManager());

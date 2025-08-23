@@ -32,6 +32,8 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
   const [joined, setJoined] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  const reconnectRef = useRef<{ attempt: number; timer: NodeJS.Timeout | null }>({ attempt: 0, timer: null });
+  const [clockOffset, setClockOffset] = useState<number>(0);
 
   // Persist inputs to localStorage so a refresh doesn’t wipe them
   useEffect(() => {
@@ -54,31 +56,63 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
       return;
     }
     const rejoinKey = getRejoinKey();
-    const socket = createClientSocket({
-      lobbyCode: lobbyCode.toUpperCase(),
-      name: name.trim(),
-      trait: trait.trim() || undefined,
-      rejoinKey: rejoinKey || undefined,
-      onRoster: () => {
-        /* roster updates are not currently displayed on the phone */
-      },
-      onJoinOk: (resp) => {
-        setRejoinKey(resp.playerKey);
-        setJoined(true);
-      },
-      onError: (msg) => {
-        setError(msg);
-      },
-    });
-    wsRef.current = socket;
+    const connect = () => {
+      const socket = createClientSocket({
+        lobbyCode: lobbyCode.toUpperCase(),
+        name: name.trim(),
+        trait: trait.trim() || undefined,
+        rejoinKey: rejoinKey || undefined,
+        onRoster: () => {
+          /* roster updates are not currently displayed on the phone */
+        },
+        onJoinOk: (resp) => {
+          setRejoinKey(resp.playerKey);
+          setJoined(true);
+          // compute clock offset relative to server
+          if (resp.snapshot && typeof resp.snapshot.serverNow === 'number') {
+            setClockOffset(Date.now() - resp.snapshot.serverNow);
+          }
+        },
+        onError: (msg) => {
+          setError(msg);
+        },
+      });
+      socket.onclose = () => {
+        // attempt reconnection with exponential backoff
+        const { attempt } = reconnectRef.current;
+        const delay = Math.min(500 * 2 ** attempt, 10000);
+        reconnectRef.current.timer = setTimeout(() => {
+          reconnectRef.current.attempt = attempt + 1;
+          connect();
+        }, delay);
+      };
+      wsRef.current = socket;
+    };
+    // initiate first connection
+    connect();
   };
 
   // Close the socket when navigating away
   useEffect(() => {
     return () => {
       wsRef.current?.close();
+      if (reconnectRef.current.timer) {
+        clearTimeout(reconnectRef.current.timer);
+      }
     };
   }, []);
+
+  // Automatically join if we have a rejoinKey and lobby code but aren't joined yet
+  useEffect(() => {
+    if (!joined) {
+      const rejoin = getRejoinKey();
+      if (rejoin && lobbyCode) {
+        handleJoin();
+      }
+    }
+    // We intentionally omit handleJoin from deps to avoid infinite loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [joined, lobbyCode]);
 
   if (joined) {
     return (

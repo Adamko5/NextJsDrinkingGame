@@ -13,6 +13,7 @@ interface HostSocketOptions {
 export function setupHostSocket(onRoster: (roster: any[]) => void): WebSocket {
   const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws';
   const ws = new WebSocket(`${protocol}://${window.location.host}/api/ws`);
+  // Expose the socket on the returned object so callers can send custom messages (e.g. START)
   ws.onmessage = (event) => {
     try {
       const msg = JSON.parse(event.data);
@@ -66,6 +67,11 @@ export function createClientSocket(options: ClientSocketOptions): WebSocket {
       }
       case 'JOIN_OK': {
         options.onJoinOk?.(msg);
+        break;
+      }
+      case 'PHASE': {
+        // Clients could use this in future to switch views
+        // For now ignore in the join flow
         break;
       }
       case 'ERROR': {

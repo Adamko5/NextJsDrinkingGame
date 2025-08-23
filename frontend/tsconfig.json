@@ -32,9 +32,9 @@
   },
   "include": [
     "next-env.d.ts",
+    "server.js",
     "server/**/*",
     "src/**/*",
-    "server.js",
     ".next/types/**/*.ts"
   ],
   "exclude": [

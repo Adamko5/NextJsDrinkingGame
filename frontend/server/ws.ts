@@ -1,4 +1,4 @@
-import type { WebSocket, WebSocketServer, RawData } from 'ws';
+import type { RawData, WebSocket, WebSocketServer } from 'ws';
 import { lobbyManager } from './lobby';
 
 // Wire up WebSocket server events. Each connection may be associated with
@@ -6,9 +6,30 @@ import { lobbyManager } from './lobby';
 // roster (e.g. the host screen). Messages are tiny JSON envelopes with
 // `{ type, ...payload }` keys. Only JOIN and ROSTER are handled here.
 export function setupWebSocketServer(wss: WebSocketServer) {
+  // Heartbeat: ping clients every 15 seconds and terminate if they don't respond.
+  const heartbeatInterval = setInterval(() => {
+    wss.clients.forEach((client: any) => {
+      if ((client as any).isAlive === false) {
+        return client.terminate();
+      }
+      (client as any).isAlive = false;
+      try {
+        client.ping();
+      } catch {
+        // ignore
+      }
+    });
+  }, 15000);
+
   // When a new socket connects we attach listeners. We keep track of
   // the lobbyCode and playerId to mark them disconnected on close.
   wss.on('connection', (ws: WebSocket, req: any) => {
+    // Track liveness for heartbeat
+    (ws as any).isAlive = true;
+    ws.on('pong', () => {
+      (ws as any).isAlive = true;
+    });
+
     let currentLobbyCode: string | null = null;
     let currentPlayerId: string | null = null;
 
@@ -50,6 +71,28 @@ export function setupWebSocketServer(wss: WebSocketServer) {
           }
           break;
         }
+        case 'START': {
+          // Only a host can start the game. The host must provide a lobbyCode.
+          const { lobbyCode } = msg;
+          if (typeof lobbyCode !== 'string') {
+            ws.send(JSON.stringify({ type: 'ERROR', message: 'Missing lobbyCode' }));
+            break;
+          }
+          try {
+            // flip lobby status
+            lobbyManager.startGame(lobbyCode);
+            // send PHASE update to all clients
+            const payload = JSON.stringify({ type: 'PHASE', name: 'playing' });
+            wss.clients.forEach((client) => {
+              if (client.readyState === client.OPEN) {
+                client.send(payload);
+              }
+            });
+          } catch (err: any) {
+            ws.send(JSON.stringify({ type: 'ERROR', message: err.message }));
+          }
+          break;
+        }
         default:
           // Unknown message type; ignore for now
           break;
@@ -63,6 +106,10 @@ export function setupWebSocketServer(wss: WebSocketServer) {
         broadcastRoster(wss, roster);
       }
     });
+  });
+  // Clean up the heartbeat interval when the server closes
+  wss.on('close', () => {
+    clearInterval(heartbeatInterval);
   });
 }
 

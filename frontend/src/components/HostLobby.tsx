@@ -50,9 +50,14 @@ export default function HostLobby({ lobbyCode, joinUrl, initialRoster, lanIp }: 
         style={{ marginTop: '1rem', padding: '0.5rem 1rem', fontSize: '1rem' }}
         disabled={roster.filter((p) => p.connected).length === 0}
         onClick={() => {
-          // Start button is not implemented in this first version. In later
-          // iterations it will emit a phase change to begin the game.
-          alert('Start is not implemented yet.');
+          if (!wsRef.current) return;
+          try {
+            wsRef.current.send(
+              JSON.stringify({ type: 'START', lobbyCode }),
+            );
+          } catch {
+            // ignore
+          }
         }}
       >
         Start
