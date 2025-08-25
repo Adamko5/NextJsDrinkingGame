@@ -5,6 +5,7 @@
  * add global stylesheets or providers here when extending the app.
  */
 import React from 'react';
+import '@/styles/globals.css';
 
 export const metadata = {
   title: 'Couch Roguelite Party Game',

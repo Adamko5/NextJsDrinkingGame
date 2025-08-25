@@ -10,6 +10,7 @@ This file documents a simple, opinionated project layout that matches the README
 - tsconfig.json — TypeScript config (if using TS)
 
 ## server/
+
 Server-side runtime code (runs in the same Node process as Next.js).
 
 - server/lobby.ts
@@ -27,6 +28,7 @@ Server-side runtime code (runs in the same Node process as Next.js).
   - Written JSON snapshots for debugging/reload when phases change (non-blocking writes)
 
 ## src/app (Next.js app routes)
+
 UI code for host (TV) and client (phone). Use simple React components and server-side rendering where helpful.
 
 - src/app/server/home/page.tsx
@@ -42,22 +44,41 @@ UI code for host (TV) and client (phone). Use simple React components and server
 
 - src/components/Roster.tsx
   - Roster display used by host and optionally client
+  - Now styled with its own CSS module and shows player class icons
 
 ## src/lib (shared client-side utilities)
 
 - src/lib/wsClient.ts
   - Client WebSocket wrapper with exponential backoff reconnect, JOIN with rejoinKey, send/receive envelope, compute single clock offset using `serverNow` from `JOIN_OK`
-
 - src/lib/storage.ts
   - Small helpers for localStorage management (rejoinKey, cached form inputs)
-
 - src/lib/timeout.ts (optional)
   - Utilities to render deadlines consistently given serverNow + client offset
+- src/lib/classes.ts
+  - Defines the `GameClass` interface and exports an array of available classes.
+  - Used on both the client and host to display class names and images.
+
+## New components
+
+- `src/components/ClassPicker.tsx`
+  - Client-side component that renders a carousel to pick a class.
+  - Uses left/right arrows to cycle through the pre-defined classes, showing image, name and description.
+- `src/components/ClassPicker.module.css`
+  - Styles for the class picker component.
+- `src/components/JoinClient.module.css`
+  - Styles for the phone join screen with larger form controls and button.
+- `src/components/HostLobby.module.css`
+  - Styles for the host lobby UI on the TV, increasing readability for a large screen.
+- `src/components/Roster.module.css`
+  - Styles for the roster list; displays player name, connection status and class avatar in a clear, TV-friendly format.
 
 ## public/
+
 - Static assets (icons, images, QR fallbacks)
+- Added `/public/classes/` containing placeholder images for each class.
 
 ## markdowns/
+
 - file_structure.md (this file)
 - design-notes.md (optional)
 

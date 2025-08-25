@@ -1,0 +1,118 @@
+.container {
+  padding: 1rem;
+  max-width: 100%;
+  margin: 0 auto;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
+
+.formGroup {
+  width: 100%;
+  padding: 1rem;
+}
+
+.label {
+  display: block;
+  font-weight: bold;
+  text-align: center;
+}
+
+.input {
+  width: 90%;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.button {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.2rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.waiting {
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.waitingContainer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.selectedCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-card-bg, #fff);
+  border: 1px solid var(--color-card-border, #e6e8ea);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 6px 18px rgba(10, 10, 10, 0.06);
+}
+
+.selectedImage {
+  width: min(80vw, 360px);
+  height: min(80vw, 360px);
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--radius-sm, 8px);
+}
+
+.selectedInfo {
+  width: 100%;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.selectedName {
+  font-size: 2rem;
+  margin: 0 0 1rem 0;
+}
+
+.selectedDescription {
+  font-size: 1.1rem;
+  color: var(--color-muted, #6b7280);
+  line-height: 1.4;
+}
+
+.waitingOverlay {
+  text-align: center;
+  font-size: 1.2rem;
+}

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import Roster from './Roster';
 import { setupHostSocket } from '../lib/wsClient';
+import styles from './HostLobby.module.css';
 
 interface HostLobbyProps {
   lobbyCode: string;
@@ -36,18 +37,18 @@ export default function HostLobby({ lobbyCode, joinUrl, initialRoster, lanIp }: 
   }, []);
 
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h1 style={{ marginBottom: '1rem' }}>Lobby Code: {lobbyCode}</h1>
-      <p>LAN IP: {lanIp}</p>
-      <p>Join URL:</p>
-      <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{joinUrl}</pre>
-      <div style={{ margin: '1rem auto', width: 256, height: 256 }}>
+    <div className={styles.container}>
+      <div className={styles.code}>Lobby {lobbyCode}</div>
+      <pre className={styles.joinUrl}>{joinUrl}</pre>
+      <div className={styles.qrWrapper}>
         <QRCodeSVG value={joinUrl} size={256} />
       </div>
-      <h2>Players</h2>
-      <Roster players={roster} />
+      <div className={styles.playersTitle}>Players</div>
+      <div className={styles.playersArea}>
+        <Roster players={roster} />
+      </div>
       <button
-        style={{ marginTop: '1rem', padding: '0.5rem 1rem', fontSize: '1rem' }}
+        className={styles.startButton}
         disabled={roster.filter((p) => p.connected).length === 0}
         onClick={() => {
           if (!wsRef.current) return;

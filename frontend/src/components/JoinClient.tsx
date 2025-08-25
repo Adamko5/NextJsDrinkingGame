@@ -3,6 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createClientSocket } from '../lib/wsClient';
 import { getRejoinKey, setRejoinKey } from '../lib/storage';
+import { classes } from '../lib/classes';
+import ClassPicker from './ClassPicker';
+import styles from './JoinClient.module.css';
 
 interface JoinClientProps {
   initialLobbyCode: string;
@@ -16,23 +19,34 @@ interface JoinClientProps {
  * a waiting state until the host starts the game.
  */
 export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
-  const [lobbyCode, setLobbyCode] = useState(() => initialLobbyCode);
+  const [lobbyCode, setLobbyCode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('cachedLobbyCode') || initialLobbyCode || '';
+    }
+    return initialLobbyCode || '';
+  });
   const [name, setName] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('cachedName') || '';
     }
     return '';
   });
-  const [trait, setTrait] = useState(() => {
+
+  // Selected class id. Defaults to the cached selection or the first class.
+  const [classId, setClassId] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('cachedTrait') || '';
+      return localStorage.getItem('cachedClassId') || classes[0].id;
     }
-    return '';
+    return classes[0].id;
   });
+
   const [joined, setJoined] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectRef = useRef<{ attempt: number; timer: NodeJS.Timeout | null }>({ attempt: 0, timer: null });
+  const reconnectRef = useRef<{ attempt: number; timer: NodeJS.Timeout | null }>({
+    attempt: 0,
+    timer: null,
+  });
   const [clockOffset, setClockOffset] = useState<number>(0);
 
   // Persist inputs to localStorage so a refresh doesn’t wipe them
@@ -40,10 +54,21 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
     if (typeof window === 'undefined') return;
     localStorage.setItem('cachedName', name);
   }, [name]);
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    localStorage.setItem('cachedTrait', trait);
-  }, [trait]);
+    localStorage.setItem('cachedClassId', classId);
+  }, [classId]);
+
+  // Persist lobby code so refresh preserves the last entered code.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('cachedLobbyCode', lobbyCode);
+    } catch {
+      // ignore
+    }
+  }, [lobbyCode]);
 
   const handleJoin = () => {
     setError(null);
@@ -60,7 +85,8 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
       const socket = createClientSocket({
         lobbyCode: lobbyCode.toUpperCase(),
         name: name.trim(),
-        trait: trait.trim() || undefined,
+        // Send the selected class id as the trait so the server doesn’t need changes.
+        trait: classId,
         rejoinKey: rejoinKey || undefined,
         onRoster: () => {
           /* roster updates are not currently displayed on the phone */
@@ -102,7 +128,10 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
     };
   }, []);
 
-  // Automatically join if we have a rejoinKey and lobby code but aren't joined yet
+  // Automatically join on first mount if we have a rejoinKey and a lobby code.
+  // Do NOT re-run when `lobbyCode` changes to avoid auto-joining while the
+  // user is typing. This prevents the case where entering the 4th character
+  // triggers an unwanted join.
   useEffect(() => {
     if (!joined) {
       const rejoin = getRejoinKey();
@@ -112,56 +141,64 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
     }
     // We intentionally omit handleJoin from deps to avoid infinite loops
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [joined, lobbyCode]);
+  }, []);
 
   if (joined) {
+    const selected = classes.find((c) => c.id === classId) || classes[0];
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <h1>Joined lobby {lobbyCode.toUpperCase()}</h1>
-        <p>Waiting for host…</p>
+      <div className={styles.waitingContainer}>
+        <div className={styles.waitingOverlay}>
+          <div>Joined lobby {lobbyCode.toUpperCase()}</div>
+          <div>Waiting for host…</div>
+        </div>
+        <div className={styles.selectedCard}>
+          <div
+            className={styles.selectedImage}
+            style={{ backgroundImage: `url(${selected.imageSrc})` }}
+            aria-hidden
+          />
+          <div className={styles.selectedInfo}>
+            <h1 className={styles.selectedName}>{selected.name}</h1>
+            <p className={styles.selectedDescription}>{selected.description}</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '400px', margin: '0 auto' }}>
-      <h1>Join Lobby</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div style={{ marginBottom: '1rem' }}>
-        <label htmlFor="lobby" style={{ display: 'block', marginBottom: '0.25rem' }}>Lobby Code</label>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Join Lobby</h1>
+      {error && <p className={styles.error}>{error}</p>}
+      <div className={styles.formGroup}>
+        <label htmlFor="lobby" className={styles.label}>
+          Lobby Code
+        </label>
         <input
           id="lobby"
           type="text"
           value={lobbyCode}
           onChange={(e) => setLobbyCode(e.target.value)}
-          style={{ width: '100%', padding: '0.5rem', fontSize: '1rem' }}
+          className={styles.input}
         />
       </div>
-      <div style={{ marginBottom: '1rem' }}>
-        <label htmlFor="name" style={{ display: 'block', marginBottom: '0.25rem' }}>Name</label>
+      <div className={styles.formGroup}>
+        <label htmlFor="name" className={styles.label}>
+          Name
+        </label>
         <input
           id="name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          style={{ width: '100%', padding: '0.5rem', fontSize: '1rem' }}
+          className={styles.input}
         />
       </div>
-      <div style={{ marginBottom: '1rem' }}>
-        <label htmlFor="trait" style={{ display: 'block', marginBottom: '0.25rem' }}>Trait (optional)</label>
-        <input
-          id="trait"
-          type="text"
-          value={trait}
-          onChange={(e) => setTrait(e.target.value)}
-          style={{ width: '100%', padding: '0.5rem', fontSize: '1rem' }}
-        />
+      <div className={styles.formGroup}>
+        <label className={styles.label}>Class</label>
+        <ClassPicker selectedId={classId} onChange={setClassId} />
       </div>
-      <button
-        type="button"
-        onClick={handleJoin}
-        style={{ padding: '0.5rem 1rem', fontSize: '1rem' }}
-      >
+      <button type="button" onClick={handleJoin} className={styles.button}>
         Join
       </button>
     </div>
