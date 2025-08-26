@@ -1,0 +1,8 @@
+1. Rework the LobbyManager so it has the lobby code stored
+  and can get the Roster data with a simple method call
+2. Make the Screen1 into a vote - something like yes/no.
+  I want to see that i can manage it this way.
+  I need to see how the ws can get the messages and send(?) them
+    to the current screen of the server.
+  After TODO 1) is implemented, the player's vote should be
+    displayer somewhere under him.

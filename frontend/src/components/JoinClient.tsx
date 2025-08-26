@@ -5,6 +5,7 @@ import { createClientSocket } from '../lib/wsClient';
 import { getRejoinKey, setRejoinKey } from '../lib/storage';
 import { classes } from '../lib/classes';
 import ClassPicker from './ClassPicker';
+import { useRouter } from 'next/navigation';
 import styles from './JoinClient.module.css';
 
 interface JoinClientProps {
@@ -12,13 +13,12 @@ interface JoinClientProps {
 }
 
 /**
- * Client component used on the phone to join a lobby. It maintains local
- * state for the form fields and uses localStorage to persist the rejoinKey
- * and cached inputs across reloads. When the user presses Join a WebSocket
- * connection is opened and a JOIN message is sent. The UI transitions to
- * a waiting state until the host starts the game.
+ * The phone join screen. Users can enter a lobby code, pick a class and
+ * join the game. When joined the UI switches to a waiting state until
+ * the host starts the game, at which point the first game screen is shown.
  */
 export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
+  // Form fields are cached in localStorage so reloads retain their values.
   const [lobbyCode, setLobbyCode] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('cachedLobbyCode') || initialLobbyCode || '';
@@ -31,8 +31,6 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
     }
     return '';
   });
-
-  // Selected class id. Defaults to the cached selection or the first class.
   const [classId, setClassId] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('cachedClassId') || classes[0].id;
@@ -41,6 +39,8 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
   });
 
   const [joined, setJoined] = useState(false);
+  const [phase, setPhase] = useState<'lobby' | string>('lobby');
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectRef = useRef<{ attempt: number; timer: NodeJS.Timeout | null }>({
@@ -60,7 +60,6 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
     localStorage.setItem('cachedClassId', classId);
   }, [classId]);
 
-  // Persist lobby code so refresh preserves the last entered code.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
@@ -70,6 +69,12 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
     }
   }, [lobbyCode]);
 
+  /**
+   * Called when the user presses Join. This function opens a WebSocket,
+   * sends a JOIN message and registers callbacks for roster, join, phase
+   * and error events. It also handles reconnection with exponential
+   * backoff if the socket closes unexpectedly.
+   */
   const handleJoin = () => {
     setError(null);
     if (!lobbyCode || lobbyCode.length < 1) {
@@ -85,11 +90,10 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
       const socket = createClientSocket({
         lobbyCode: lobbyCode.toUpperCase(),
         name: name.trim(),
-        // Send the selected class id as the trait so the server doesn’t need changes.
         trait: classId,
         rejoinKey: rejoinKey || undefined,
         onRoster: () => {
-          /* roster updates are not currently displayed on the phone */
+          /* roster updates are not displayed on the phone */
         },
         onJoinOk: (resp) => {
           setRejoinKey(resp.playerKey);
@@ -97,6 +101,18 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
           // compute clock offset relative to server
           if (resp.snapshot && typeof resp.snapshot.serverNow === 'number') {
             setClockOffset(Date.now() - resp.snapshot.serverNow);
+          }
+        },
+        onPhase: (phaseName) => {
+          if (phaseName) {
+            const id = String(phaseName);
+            setPhase(id as any);
+            if (id === '1') {
+              // Navigate to client phase 1 page. Keep the client route mounted
+              // per README guidance; if you prefer not to navigate, we can
+              // instead render inline state. For now, route to /client/1.
+              router.push('/client/1');
+            }
           }
         },
         onError: (msg) => {
@@ -130,8 +146,7 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
 
   // Automatically join on first mount if we have a rejoinKey and a lobby code.
   // Do NOT re-run when `lobbyCode` changes to avoid auto-joining while the
-  // user is typing. This prevents the case where entering the 4th character
-  // triggers an unwanted join.
+  // user is typing.
   useEffect(() => {
     if (!joined) {
       const rejoin = getRejoinKey();

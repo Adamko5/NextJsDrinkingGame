@@ -41,9 +41,12 @@
   --neutral-900: #0f1724;
 
   /* Semantic */
-  --bg: var(--neutral-50);
-  --surface: #ffffff;
-  --text: var(--neutral-800);
+  /* Use a softer background and surface to make the UI feel more relaxed on large displays
+     and handheld devices. The text colour is slightly lighter to improve contrast
+     against the new background. */
+  --bg: var(--blue-50);
+  --surface: var(--neutral-50);
+  --text: var(--neutral-700);
   --muted: var(--neutral-500);
   --border: var(--neutral-200);
   --success: #10b981;
@@ -58,9 +61,10 @@
   --gradient-soft:    linear-gradient(180deg, var(--blue-50) 0%, var(--cyan-50) 100%);
 
   /* Convenience aliases */
-  --primary: var(--blue-500);
-  --primary-600: var(--blue-600);
-  --accent: var(--cyan-500);
+  /* Lighten the primary and accent colours for a friendlier look */
+  --primary: var(--blue-400);
+  --primary-600: var(--blue-500);
+  --accent: var(--cyan-400);
   --glass: rgba(255,255,255,0.6);
 }
 

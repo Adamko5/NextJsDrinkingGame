@@ -21,6 +21,8 @@ export interface Lobby {
   status: 'lobby' | 'playing' | 'ended';
   players: Player[];
   playerKeyMap: Map<string, Player>;
+  /** Per-player votes or selections recorded during a phase. Keyed by playerId. */
+  votes: Map<string, any>;
 }
 
 /**
@@ -83,7 +85,11 @@ export function pickLanIp(): string {
  * keyed by lobbyCode.
  */
 class LobbyManager {
+  // Keep a reference to the current active lobby for the simple single-lobby
+  // case (the existing code relied on this). Also maintain a map of lobbies
+  // keyed by their code so callers may address specific lobbies directly.
   private currentLobby: Lobby | null = null;
+  private lobbies: Map<string, Lobby> = new Map();
 
   /** A map of disconnect timers by playerId used to prune players after a grace period. */
   private disconnectTimers: Map<string, NodeJS.Timeout> = new Map();
@@ -95,23 +101,40 @@ class LobbyManager {
   createLobby(): Lobby {
     if (this.currentLobby) return this.currentLobby;
     const code = generateLobbyCode();
-    this.currentLobby = {
+    const lobby: Lobby = {
       code,
       status: 'lobby',
       players: [],
       playerKeyMap: new Map(),
+  votes: new Map(),
     };
-    return this.currentLobby;
+    this.currentLobby = lobby;
+    this.lobbies.set(code, lobby);
+    return lobby;
   }
 
   /**
    * Look up a lobby by its code. Returns undefined if it does not exist.
    */
   getLobby(code: string): Lobby | undefined {
-    if (this.currentLobby && this.currentLobby.code === code) {
-      return this.currentLobby;
-    }
-    return undefined;
+    return this.lobbies.get(code);
+  }
+
+  /**
+   * Return the current active lobby (the one created by `createLobby`).
+   * This is a convenience for code that uses the single-lobby pattern.
+   */
+  getCurrentLobby(): Lobby | null {
+    return this.currentLobby;
+  }
+
+  /**
+   * Convenience helper: return the roster for the current active lobby.
+   * Returns an empty array if no lobby exists.
+   */
+  getCurrentRoster(): { id: string; name: string; trait?: string; connected: boolean }[] {
+    if (!this.currentLobby) return [];
+    return this.currentLobby.players.map(({ id, name, trait, connected }) => ({ id, name, trait, connected }));
   }
 
   /**
@@ -126,7 +149,7 @@ class LobbyManager {
     trait: string | undefined,
     rejoinKey: string | undefined,
   ): { player: Player; isRejoin: boolean } {
-    const lobby = this.getLobby(lobbyCode);
+  const lobby = this.getLobby(lobbyCode);
     if (!lobby) {
       throw new Error(`Lobby ${lobbyCode} does not exist`);
     }
@@ -171,9 +194,9 @@ class LobbyManager {
    * implement that here.
    */
   markDisconnected(lobbyCode: string, playerId: string): void {
-    const lobby = this.getLobby(lobbyCode);
-    if (!lobby) return;
-    const player = lobby.players.find((p) => p.id === playerId);
+  const lobby = this.getLobby(lobbyCode);
+  if (!lobby) return;
+  const player = lobby.players.find((p) => p.id === playerId);
     if (player) {
       player.connected = false;
       // schedule removal after 30s if not reconnected
@@ -186,15 +209,33 @@ class LobbyManager {
 
   /** Remove a player entirely from the lobby. Called after the grace timeout. */
   private removePlayer(lobbyCode: string, playerId: string): void {
-    const lobby = this.getLobby(lobbyCode);
-    if (!lobby) return;
-    const index = lobby.players.findIndex((p) => p.id === playerId);
+  const lobby = this.getLobby(lobbyCode);
+  if (!lobby) return;
+  const index = lobby.players.findIndex((p) => p.id === playerId);
     if (index !== -1) {
       const player = lobby.players[index];
       lobby.playerKeyMap.delete(player.playerKey);
       lobby.players.splice(index, 1);
     }
+    // Clean up any stored votes from the removed player.
+    if (lobby.votes) lobby.votes.delete(playerId);
     this.disconnectTimers.delete(playerId);
+  }
+
+  /** Record or update a player's vote for the given lobby. */
+  setVote(lobbyCode: string, playerId: string, vote: any): void {
+    const lobby = this.getLobby(lobbyCode);
+    if (!lobby) return;
+    lobby.votes.set(playerId, vote);
+  }
+
+  /** Return a copy of the votes object keyed by playerId for broadcasting. */
+  getVotes(lobbyCode: string): { [playerId: string]: any } {
+    const lobby = this.getLobby(lobbyCode);
+    if (!lobby) return {};
+    const out: { [playerId: string]: any } = {};
+    for (const [pid, v] of lobby.votes.entries()) out[pid] = v;
+    return out;
   }
 
   /** Flip the lobby into the playing state. No new players may join after this. */
@@ -207,8 +248,8 @@ class LobbyManager {
 
   /** Return the current status of the lobby. */
   getStatus(lobbyCode: string): 'lobby' | 'playing' | 'ended' | undefined {
-    const lobby = this.getLobby(lobbyCode);
-    return lobby?.status;
+  const lobby = this.getLobby(lobbyCode);
+  return lobby?.status;
   }
 
   /**
@@ -216,9 +257,9 @@ class LobbyManager {
    * what the client needs to render names and connection status.
    */
   getRoster(lobbyCode: string): { id: string; name: string; trait?: string; connected: boolean }[] {
-    const lobby = this.getLobby(lobbyCode);
-    if (!lobby) return [];
-    return lobby.players.map(({ id, name, trait, connected }) => ({ id, name, trait, connected }));
+  const lobby = this.getLobby(lobbyCode);
+  if (!lobby) return [];
+  return lobby.players.map(({ id, name, trait, connected }) => ({ id, name, trait, connected }));
   }
 }
 

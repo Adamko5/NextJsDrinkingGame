@@ -1,0 +1,13 @@
+/* Styles for the first game screen. This container fills the viewport and
+   centers its contents. Feel free to customize further to suit your design. */
+.container {
+  /* Use flexbox to center content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  /* Use the surface color so this screen stands out slightly from the page background */
+  background-color: var(--surface);
+}

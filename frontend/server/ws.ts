@@ -81,13 +81,38 @@ export function setupWebSocketServer(wss: WebSocketServer) {
           try {
             // flip lobby status
             lobbyManager.startGame(lobbyCode);
-            // send PHASE update to all clients
-            const payload = JSON.stringify({ type: 'PHASE', name: 'playing' });
+            // send PHASE update to all clients. Use a numeric phase id so the
+            // client-side phase tracker can map it to the correct screen.
+            const payload = JSON.stringify({ type: 'PHASE', name: 1 });
             wss.clients.forEach((client) => {
               if (client.readyState === client.OPEN) {
                 client.send(payload);
               }
             });
+          } catch (err: any) {
+            ws.send(JSON.stringify({ type: 'ERROR', message: err.message }));
+          }
+          break;
+        }
+        case 'VOTE': {
+          // Clients send { type: 'VOTE', ...payload }. Ensure we know which
+          // player and lobby this socket corresponds to before accepting.
+          if (!currentLobbyCode || !currentPlayerId) {
+            console.log('Error in VOTE.');
+            ws.send(JSON.stringify({ type: 'ERROR', message: 'Not joined' }));
+            break;
+          }
+          try {
+            // Store the vote in the lobby state and broadcast an update.
+            lobbyManager.setVote(currentLobbyCode, currentPlayerId, msg);
+            const votes = lobbyManager.getVotes(currentLobbyCode);
+            const payload = JSON.stringify({ type: 'VOTES', votes });
+            wss.clients.forEach((client) => {
+              if (client.readyState === client.OPEN) {
+                client.send(payload);
+              }
+            });
+            console.log(`Received VOTE from ${currentPlayerId} in ${currentLobbyCode}`, msg);
           } catch (err: any) {
             ws.send(JSON.stringify({ type: 'ERROR', message: err.message }));
           }
