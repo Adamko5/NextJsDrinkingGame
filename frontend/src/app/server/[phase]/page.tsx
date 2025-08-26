@@ -1,5 +1,5 @@
-import Screen1 from '../../../screens_server/Screen1';
 import { lobbyManager } from '../../../../server/lobby';
+import ServerPhaseClient from '../../../components/ServerPhaseClient';
 
 interface Props {
   params: { phase: string };
@@ -7,16 +7,11 @@ interface Props {
 
 export default function ServerPhasePage({ params }: Props) {
   const { phase } = params;
-  // You can read the lobby state here if needed:
-  // const lobby = lobbyManager.getLobby(...)
-  const roster = lobbyManager.getCurrentRoster();
-  if (phase === '1') {
-    return <Screen1 initialPlayers={roster} />;
-  }
-  return (
-    <div style={{ padding: 24 }}>
-      <h1>Phase {phase}</h1>
-      <p>No server page defined for this phase yet.</p>
-    </div>
-  );
+  // Grab the current lobby. If it doesn't exist (e.g. on hard reload) create
+  // one. Using getCurrentLobby rather than createLobby prevents us from
+  // accidentally creating a second lobby when the host refreshes during a game.
+  const lobby = lobbyManager.getCurrentLobby() ?? lobbyManager.createLobby();
+  const players = lobby.players.map(({ id, name, trait, connected }) => ({ id, name, trait, connected }));
+  const votes = lobbyManager.getVotes(lobby.code);
+  return <ServerPhaseClient phase={phase} initialPlayers={players} initialVotes={votes} />;
 }

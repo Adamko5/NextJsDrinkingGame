@@ -1,40 +1,61 @@
 /*
  * Client‑side WebSocket helpers. The host screen opens a socket solely to
- * listen for ROSTER and PHASE updates, while the phone screens send a JOIN
- * request and then listen for JOIN_OK, PHASE and subsequent updates. These
- * functions abstract away message parsing and provide callback hooks for
- * your React components.
+ * listen for roster, phase and vote updates, while the phone screens send a
+ * JOIN request and then listen for responses. These functions abstract
+ * away message parsing and provide callback hooks for React components. A
+ * module‑level reference to the most recent client socket is kept so that
+ * helper functions like `sendVote` can operate without threading the
+ * socket through the React tree.
  */
 
-interface HostSocketOptions {
+export interface HostSocketCallbacks {
+  /**
+   * Called whenever the server broadcasts a ROSTER update. Hosts should
+   * update their player list accordingly.
+   */
   onRoster: (roster: any[]) => void;
   /**
    * Called whenever the server broadcasts a PHASE message. The phase name
-   * indicates which screen should be shown (e.g. 'playing').
+   * indicates which screen should be shown (e.g. '1' for the first game
+   * screen). Optional for hosts that do not need to react to phases.
    */
   onPhase?: (phaseName: string) => void;
+  /**
+   * Called whenever the server broadcasts a VOTES message. The votes
+   * object is keyed by playerId and contains the raw vote payload for
+   * each player. Optional for hosts that do not display votes.
+   */
+  onVotes?: (votes: any) => void;
 }
 
 /**
- * Open a WebSocket connection on the host (TV) side. The host listens for
- * roster changes and phase transitions. Callers can send messages via
- * the returned socket reference (e.g. to send START).
+ * Open a WebSocket connection on the host (TV) side. The host listens
+ * for roster changes, phase transitions and votes. Callers can send
+ * messages via the returned socket reference (e.g. to send START).
  */
 export function setupHostSocket(
   onRoster: (roster: any[]) => void,
   onPhase?: (phaseName: string) => void,
+  onVotes?: (votes: any) => void,
 ): WebSocket {
-  const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const protocol =
+    typeof window !== 'undefined' && window.location.protocol === 'https:'
+      ? 'wss'
+      : 'ws';
   const ws = new WebSocket(`${protocol}://${window.location.host}/api/ws`);
-  // Expose the socket on the returned object so callers can send custom messages (e.g. START)
   ws.onmessage = (event) => {
     try {
       const msg = JSON.parse(event.data);
-      if (msg.type === 'ROSTER') {
-        onRoster(msg.roster);
-      } else if (msg.type === 'PHASE') {
-        // Notify host about phase changes (e.g. when the game starts)
-        onPhase?.(msg.name);
+      switch (msg.type) {
+        case 'ROSTER':
+          onRoster(msg.roster);
+          break;
+        case 'PHASE':
+          onPhase?.(String(msg.name));
+          break;
+        case 'VOTES':
+          onVotes?.(msg.votes);
+          break;
       }
     } catch {
       // ignore invalid JSON
@@ -50,28 +71,27 @@ interface ClientSocketOptions {
   rejoinKey?: string;
   onRoster?: (roster: any[]) => void;
   onJoinOk?: (resp: { playerId: string; playerKey: string; snapshot: any }) => void;
-  /**
-   * Called whenever the server broadcasts a PHASE message. The phase name
-   * indicates which screen should be shown on the client.
-   */
   onPhase?: (phaseName: string) => void;
+  onVotes?: (votes: any) => void;
   onError?: (message: string) => void;
 }
 
 /**
- * Create a WebSocket on the client (phone) side. It will send a JOIN
- * message on open and then listen for roster, join, phase and error events.
+ * Create a WebSocket on the client (phone) side. It sends a JOIN message
+ * on open and then listens for roster, join, phase, vote and error events.
  */
 export function createClientSocket(options: ClientSocketOptions): WebSocket {
-  const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const protocol =
+    typeof window !== 'undefined' && window.location.protocol === 'https:'
+      ? 'wss'
+      : 'ws';
   const ws = new WebSocket(`${protocol}://${window.location.host}/api/ws`);
-  // Keep a module-level reference to the most recent client socket so other
+  // Keep a module‑level reference to the most recent client socket so other
   // UI modules can send messages (e.g. votes) without threading the socket
-  // through React props. This simplifies the phone UI which mounts in a
-  // different route than the join component.
+  // through React props. Assign directly on the function so the variable
+  // survives HMR in Next.js dev mode.
   (createClientSocket as any).clientSocket = ws;
-  // Also provide a well-known named export (set below) so callers can import
-  // a typed reference. We assign below after the function declaration.
+
   ws.onopen = () => {
     const joinMsg: any = {
       type: 'JOIN',
@@ -84,6 +104,7 @@ export function createClientSocket(options: ClientSocketOptions): WebSocket {
     }
     ws.send(JSON.stringify(joinMsg));
   };
+
   ws.onmessage = (event) => {
     let msg: any;
     try {
@@ -102,8 +123,11 @@ export function createClientSocket(options: ClientSocketOptions): WebSocket {
         break;
       }
       case 'PHASE': {
-        // Notify clients about phase changes to allow view switches.
-        options.onPhase?.(msg.name);
+        options.onPhase?.(String(msg.name));
+        break;
+      }
+      case 'VOTES': {
+        options.onVotes?.(msg.votes);
         break;
       }
       case 'ERROR': {
@@ -114,23 +138,28 @@ export function createClientSocket(options: ClientSocketOptions): WebSocket {
         break;
     }
   };
-  // When the socket closes, clear the module-level reference if it still
-  // points to this socket instance.
+
+  // When the socket closes, clear the module‑level reference if it still
+  // points to this socket instance. This prevents stale sockets from
+  // intercepting calls to sendVote.
   ws.addEventListener('close', () => {
     try {
       if ((createClientSocket as any).clientSocket === ws) {
         (createClientSocket as any).clientSocket = null;
       }
-    } catch (e) {
+    } catch {
       // ignore
     }
   });
   return ws;
 }
 
-// Export a convenient, typed module-level clientSocket reference. Consumers
-// should prefer the helper `sendVote` below for structured logging and safe
-// sending.
+/**
+ * A module‑level reference to the current client WebSocket. This value is
+ * updated whenever `createClientSocket` is called. Components should not
+ * rely on this directly; instead use the helper `sendVote` to ensure the
+ * socket is open before sending.
+ */
 export let clientSocket: WebSocket | null = (createClientSocket as any).clientSocket || null;
 
 /**
@@ -148,7 +177,6 @@ export function sendVote(vote: any): boolean {
     }
     const payload = { type: 'VOTE', ...vote };
     clientSocket.send(JSON.stringify(payload));
-    // Structured log for later parsing when debugging client-side issues.
     console.log('[wsClient] Sent VOTE', payload);
     return true;
   } catch (err) {

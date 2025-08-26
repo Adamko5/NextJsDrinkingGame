@@ -1,14 +1,17 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
+import styles from './JoinClient.module.css';
 import { createClientSocket } from '../lib/wsClient';
 import { getRejoinKey, setRejoinKey } from '../lib/storage';
 import { classes } from '../lib/classes';
-import ClassPicker from './ClassPicker';
-import { useRouter } from 'next/navigation';
-import styles from './JoinClient.module.css';
+import Screen1 from '../screens_client/Screen1';
 
 interface JoinClientProps {
+  /**
+   * The lobby code extracted from the URL on initial render. If present the
+   * input field is prefilled so players don't need to type it manually.
+   */
   initialLobbyCode: string;
 }
 
@@ -16,6 +19,7 @@ interface JoinClientProps {
  * The phone join screen. Users can enter a lobby code, pick a class and
  * join the game. When joined the UI switches to a waiting state until
  * the host starts the game, at which point the first game screen is shown.
+ * We avoid routing away from this page so that the WebSocket remains open.
  */
 export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
   // Form fields are cached in localStorage so reloads retain their values.
@@ -39,15 +43,13 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
   });
 
   const [joined, setJoined] = useState(false);
-  const [phase, setPhase] = useState<'lobby' | string>('lobby');
-  const router = useRouter();
+  const [phase, setPhase] = useState<string>('lobby');
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectRef = useRef<{ attempt: number; timer: NodeJS.Timeout | null }>({
     attempt: 0,
     timer: null,
   });
-  const [clockOffset, setClockOffset] = useState<number>(0);
 
   // Persist inputs to localStorage so a refresh doesn’t wipe them
   useEffect(() => {
@@ -70,10 +72,10 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
   }, [lobbyCode]);
 
   /**
-   * Called when the user presses Join. This function opens a WebSocket,
-   * sends a JOIN message and registers callbacks for roster, join, phase
-   * and error events. It also handles reconnection with exponential
-   * backoff if the socket closes unexpectedly.
+   * Attempt to join the lobby. On open the client socket sends a JOIN
+   * message; on success the server responds with JOIN_OK and we record
+   * the playerKey. Reconnection with exponential backoff is triggered
+   * when the socket closes unexpectedly.
    */
   const handleJoin = () => {
     setError(null);
@@ -98,21 +100,10 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
         onJoinOk: (resp) => {
           setRejoinKey(resp.playerKey);
           setJoined(true);
-          // compute clock offset relative to server
-          if (resp.snapshot && typeof resp.snapshot.serverNow === 'number') {
-            setClockOffset(Date.now() - resp.snapshot.serverNow);
-          }
         },
         onPhase: (phaseName) => {
           if (phaseName) {
-            const id = String(phaseName);
-            setPhase(id as any);
-            if (id === '1') {
-              // Navigate to client phase 1 page. Keep the client route mounted
-              // per README guidance; if you prefer not to navigate, we can
-              // instead render inline state. For now, route to /client/1.
-              router.push('/client/1');
-            }
+            setPhase(String(phaseName));
           }
         },
         onError: (msg) => {
@@ -122,7 +113,7 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
       socket.onclose = () => {
         // attempt reconnection with exponential backoff
         const { attempt } = reconnectRef.current;
-        const delay = Math.min(500 * 2 ** attempt, 10000);
+        const delay = Math.min(500 * 2 ** attempt, 10_000);
         reconnectRef.current.timer = setTimeout(() => {
           reconnectRef.current.attempt = attempt + 1;
           connect();
@@ -145,7 +136,7 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
   }, []);
 
   // Automatically join on first mount if we have a rejoinKey and a lobby code.
-  // Do NOT re-run when `lobbyCode` changes to avoid auto-joining while the
+  // Do NOT re‑run when `lobbyCode` changes to avoid auto‑joining while the
   // user is typing.
   useEffect(() => {
     if (!joined) {
@@ -158,29 +149,26 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Once joined and the phase has advanced, render the appropriate game screen.
+  if (joined && phase === '1') {
+    // When phase 1 begins on the server, render the client voting screen. We
+    // intentionally stay on the same page so that the WebSocket remains open.
+    return <Screen1 />;
+  }
+
+  // Joined but still in lobby/other phase: show waiting state
   if (joined) {
-    const selected = classes.find((c) => c.id === classId) || classes[0];
     return (
       <div className={styles.waitingContainer}>
         <div className={styles.waitingOverlay}>
           <div>Joined lobby {lobbyCode.toUpperCase()}</div>
           <div>Waiting for host…</div>
         </div>
-        <div className={styles.selectedCard}>
-          <div
-            className={styles.selectedImage}
-            style={{ backgroundImage: `url(${selected.imageSrc})` }}
-            aria-hidden
-          />
-          <div className={styles.selectedInfo}>
-            <h1 className={styles.selectedName}>{selected.name}</h1>
-            <p className={styles.selectedDescription}>{selected.description}</p>
-          </div>
-        </div>
       </div>
     );
   }
 
+  // Otherwise show the join form
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Join Lobby</h1>
@@ -211,9 +199,19 @@ export default function JoinClient({ initialLobbyCode }: JoinClientProps) {
       </div>
       <div className={styles.formGroup}>
         <label className={styles.label}>Class</label>
-        <ClassPicker selectedId={classId} onChange={setClassId} />
+        <select
+          value={classId}
+          onChange={(e) => setClassId(e.target.value)}
+          className={styles.input}
+        >
+          {classes.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
-      <button type="button" onClick={handleJoin} className={styles.button}>
+      <button onClick={handleJoin} className={styles.button}>
         Join
       </button>
     </div>
