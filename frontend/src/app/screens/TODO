@@ -1,0 +1,25 @@
+This TODO is scoped for the current /screens directory.
+This directory should contain all the screens of the frontend.
+The frontend has 2 parts: server and client.
+
+The implementation of this TODO list consists of pre-made
+    file structure and empty files.
+Every file contains an explanation of what it represents
+    and what it should display.
+
+Implementation steps:
+1. Implement the files in ./client - this includes:
+    Home screen and it's components in ./client/home
+    Voting1 screen and it's components in ./client/voting1
+        Note: there might be more types of voting screens,
+            so that's why i named it Voting1 instead of Voting
+2. Implement the files in ./server - this includes:
+    Home screen and it's components in ./server/home
+        Note: the Home screen contains some old implementation
+            that builds the LAN ip. You can keep that, edit it,
+            or even edit the util for the IP in ../../../util/ip-picker, if you need it
+    Voting1 screen and it's components in ./server/voting1
+
+Constraints and notes:
+1. You should use the styles defined in ../../styles
+2. You can use the general components defined in ../../components/general

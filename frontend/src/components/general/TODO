@@ -1,0 +1,41 @@
+This /general folder should contain general use components—styled
+in my app's theme—that can be reused across different screens.
+
+Components to be implemented:
+    1. Button:
+       - A simple button that accepts a text label.
+
+    2. Clickable Image:
+       - An image component that handles click events.
+
+    3. Input:
+       - A basic input field for text entry.
+
+    4. Card Component:
+       - A container with consistent padding, margin, and subtle shadow.
+       - Useful for grouping content in a visually distinct section.
+
+    5. Modal Dialog:
+       - A reusable overlay dialog for confirmations, alerts, and temporary interactions.
+       - Supports titles, messages, and action buttons.
+
+    6. Toast/Alert Notification:
+       - A small popup component for displaying short-lived messages such as successes, warnings, or errors.
+       - Configurable to auto-dismiss after a few seconds.
+
+    7. Loader/Spinner:
+       - A visual indicator to show when asynchronous operations (e.g., data fetches) are in progress.
+
+    8. Toggle Switch:
+       - A binary switch component for enabling or disabling options.
+       - Styled to match the app's overall theme.
+
+    10. Icon Component:
+        - A standardized component for displaying icons consistently.
+        - Supports different sizes and style variants, integrating seamlessly with our theme.
+
+    11. Label Component:
+        - A text label to accompany inputs and form elements.
+        - Enhances accessibility and maintains layout consistency.
+
+These components will provide a flexible and consistent foundation to build various feature-specific UIs while ensuring the overall appearance adheres to our app's theme.

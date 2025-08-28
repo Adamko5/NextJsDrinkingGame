@@ -1,0 +1,1 @@
+// Component that displays players and their vote

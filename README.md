@@ -1,198 +1,108 @@
-# Couch Roguelite Party Game (LAN-Only)
+# Couch Roguelite Party Game (LAN‑Only)
 
-A living-room, couch-co-op **RPG/roguelite party game** designed for one TV and a handful of phones.  
-The **TV** shows the game board/action; **phones** act as controllers. Everything runs on your PC over local Wi-Fi—**no internet required**. A **Sober Mode** toggle lets you swap any “drinking” penalties for points/exercises/water - to be done after the drinking game is fully finished.
+A living‑room, couch‑co‑op **RPG/roguelite party game** designed for one TV and a handful of phones.  
+The **TV** shows the game board/action; **phones** act as controllers. Everything runs on your PC over local Wi‑Fi—**no internet required**. A **Sober Mode** toggle (not done, might not be done) lets you swap any “drinking” penalties for points/exercises/water - to be done after the drinking game is fully finished.
+
+---
 
 ## How to Play (Quick Start)
 
 1. **Start the app** on your PC and connect the PC to the TV (HDMI or casting).
-2. Open **`/server/home`** on the TV. It creates a lobby and shows a **QR code** + join URL.
-3. Each player scans the QR (or enters the URL) to open **`/client/home`** on their phone, then enters a **name** (and optionally picks a **class/trait**).
-4. When everyone’s in, the host presses **Start** on the TV.  
-   The server pushes prompts (vote, quiz, reflex, etc.) to phones in real time—**no refreshes** needed.
-5. If a phone sleeps/reloads, it **rejoins automatically** and picks up the current screen.
+2. Open **`/server/home`** on the TV. It creates a lobby and displays a join URL and QR code.
+3. Each player navigates to **`/client/home`** on their phone, enters a **name** (and optionally picks a **class/trait**), and then taps **Join**.
+4. Once all players have joined, the host clicks **Start** on the TV.  
+   The backend handles sending all necessary state updates for game prompts, phase changes, and results.
+5. In case of a page reload or if a phone goes to sleep, the client will reconnect and retrieve the current game state from the backend.
 
 ---
 
-# Join Flow (WS-only)
+## Migration from WebSocket to Backend Communication
 
-This project runs as a **single Next.js monolith** with two screens, served from one Node process: a Next.js HTTP handler plus a small custom Node HTTP server that performs WebSocket upgrades on `/api/ws` (so the app stays same-origin and runs on a single port).
-- **TV/Host:** `/server/home`
-- **Phone/Controller:** `/client/home`
+*Note: The project has migrated away from WebSocket communication to a backend-driven API approach. The following points describe the changes:*
 
-Everything is **local/LAN-only**, all game state is **in memory**, and the join/auth flow uses a simple **playerKey** carried over WebSocket. No DB and no security hardening—just fast party vibes.
+- **Backend Endpoints Only:**  
+  All interactions (e.g., joining a lobby, triggering game phases, fetching snapshots, etc.) now use HTTP endpoints. The `/api/ws` endpoint is no longer used.
 
----
+- **Frontend Cleanup in Progress:**  
+  Some remnants of the old WebSocket-based code may still exist in the frontend source. These are maintained for backward compatibility during the migration but will be removed as the new backend approach is fully adopted.
 
-## Goals
-
-- Let phones join a lobby shown on the TV.
-- Keep players connected as they refresh/sleep/rejoin.
-- Zero page refreshes for state changes (server pushes new views via WebSocket).
+- **Consistent State via REST API:**  
+  Clients make REST API calls to join the lobby, retrieve snapshots, and perform game actions. The backend now serves as the single source of truth for the current game state.
 
 ---
 
 ## Topology
 
 - **Routes**
-  - `/server/home` — creates/shows a lobby and join QR
-  - `/client/home` — controller UI and join form
-  - `/api/ws` — WebSocket endpoint (both directions)
+  - `/server/home` — Creates/Shows a lobby and join QR.
+  - `/client/home` — Controller UI and join form.
+  - **Backend API Endpoints** — Replaces WebSocket communication. For example:
+    - `POST /api/lobby` to create a new lobby.
+    - `GET /api/snapshot` to retrieve the full game state snapshot.
+    - Other endpoints for player and vote actions.
 
 - **Process**
-  - Single Node process holds the **authoritative game state**.
-  - One active lobby at a time (or a tiny map of lobbies if you want multiple).
+  - A single Node process maintains the authoritative game state.
+  - Only one active lobby is managed at a time (or a map of lobbies for multiple games).
 
 ---
 
-## Minimal Data (concepts, not code)
+## Lifecycle (High Level)
 
-- **Lobby:** `{ code, status: 'lobby'|'playing'|'ended', players: {} }`
-- **Player:** `{ id, name, trait, connected, playerKey?, connId?, ip? }`
-- **playerKey:** short random string returned on join; saved in `localStorage` to reclaim the same player on reconnect.
+`server boot → host opens /server/home → lobby created → players join via /client/home → host starts game → game phases managed by backend APIs`
 
 ---
 
-## Lifecycle (high level)
+## Detailed Communication Flow
 
-`server boot → host opens /server/home → lobby created → players join via /client/home → host starts → game phases`
-
----
-
-## Detailed TODOs
-
-### 0) Boot + Lobby
-- [ ] On first `/server/home` load, create a lobby in memory.
-- [ ] Generate a human-friendly **lobbyCode** (e.g., “ABCD”) and a **seed**.
-- [ ] Bind the server to `0.0.0.0` and auto-select the first non-internal IPv4 from `os.networkInterfaces()` to build a join URL/QR:
+### 1) Boot + Lobby Creation
+- The host accesses `/server/home` which triggers the creation of a lobby in memory.
+- A human‑friendly **lobbyCode** (e.g., “ABCD”) is generated along with a unique lobby seed.
+- The server automatically selects an appropriate LAN IP and builds the join URL/QR code:
   `http://<LAN-IP>:3000/client/home?lobby=<code>`.
-  The host UI should display the chosen LAN IP and offer a **Cycle IPs** button to pick a different interface if needed. Also provide a manual lobby-code input on the client in case the QR/URL is unreachable.
-- [ ] Show a roster panel (initially empty) and a **Start** button (disabled until ≥1 player).
+- The UI displays the current lobby code, join URL, and a real‑time roster of players with a disabled **Start** button until at least one player has joined.
 
-### 1) Client Join Screen (`/client/home`)
-- [ ] Read `lobby` from querystring. If missing, provide a lobby code input.
-- [ ] Display a simple **join form**:
-  - Name (required)
-  - Trait/class (optional/required — your choice)
-  - **Join** button
-- [ ] Cache form inputs locally so a refresh doesn’t wipe them.
+### 2) Client Join Screen (`/client/home`)
+- When a user accesses `/client/home`, the app reads the `lobby` code from the query string (or prompts for it).
+- A join form is displayed where the player enters their name and (optionally) selects a trait/class.
+- Upon tapping **Join**, the client calls the appropriate backend endpoint (e.g., `POST /api/players`) to register and join the lobby.
+- The player’s `playerKey` is stored locally to allow seamless reconnects.
 
-### 2) Open WebSocket (WS-only flow)
-- [ ] When the user taps **Join**:
-  - Open a WebSocket connection to `/api/ws` served by the same Node process (not a serverless API route).
-  - Immediately send a `JOIN` message with:
-    - `lobbyCode`
-    - `name`
-    - `trait`
-    - `rejoinKey` (if present in `localStorage`)
-- [ ] Keep the WS open for the rest of the session. On reconnect the client resends `JOIN` with `rejoinKey` to reclaim the player.
+### 3) Backend-Powered Game Updates
+- Instead of a persistent WebSocket, clients now poll or use long-polling (if needed) to retrieve game state updates, or subscribe using a new mechanism provided by the backend.
+- The backend endpoint (`GET /api/snapshot`) returns a snapshot containing the phase, current prompt (if any), roster, and current server time.
+- The client maps the response to update the UI accordingly.
 
-### 3) Server: Handle `JOIN`
-- [ ] Validate that the lobby exists and is `status === 'lobby'` (or `playing` if you allow late joins).
-- [ ] If a `rejoinKey` matches an existing player, **reattach** this connection to that player.
-- [ ] Otherwise:
-  - Create a **new player** (`id`, `name`, `trait`, `connected = true`).
-  - Generate a **playerKey** (short random string) and store a mapping `playerKey → playerId` in memory for future reclaims.
-- [ ] Store `connId` (the socket id) and optional `ip` metadata.
-- [ ] On success send back `JOIN_OK` to that socket with `{ playerId, playerKey, snapshot }` where `snapshot` is a full state snapshot (phase, currentPrompt if any, roster, and `serverNow` epoch-ms). Clients use `serverNow` to compute clock offset and display consistent deadlines.
-- [ ] Broadcast a `ROSTER` update to the host screen and all clients.
-
-### 4) Client: Handle `JOIN_OK`
-- [ ] Save `playerKey` in `localStorage.rejoinKey`.
-- [ ] Use the included snapshot + `serverNow` to resync UI (compute a single clock offset: `offset = Date.now() - serverNow`). Show **Waiting for host…** state after resync.
-- [ ] If WS drops, auto-reconnect with exponential backoff and resend `JOIN` with `rejoinKey`.
-
-### 5) Presence (lightweight)
-- [ ] On WS `close`: mark the player `connected = false`, broadcast `ROSTER`. Consider a short grace timeout (e.g., 30s) before removing players permanently to allow brief disconnects.
-- [ ] On client reconnect: send `JOIN` with `rejoinKey` to reclaim without user action.
-- [ ] Use heartbeat ping/pong every ~15s to detect dead sockets quickly.
-
-### 6) Lock & Start
-- [ ] On `/server/home`, enable **Start** when ≥1 player is connected.
-- [ ] Clicking **Start**:
-  - Flip lobby to `status = 'playing'`.
-  - Freeze the roster (or keep it open if you want late joins).
-  - Broadcast the first **phase**/**prompt** to all clients (see “Server-Driven Screens”).
-
----
-
-## Server-Driven Screens (no refreshes)
-
-Do **not** navigate pages on the controller. Keep `/client/home` mounted and **switch views by state** when the server broadcasts a prompt.
-
-- **Server → Clients**
-  - `PROMPT` (e.g., to vote/answer)
-  - `RESULT` (resolution/totals)
-  - `PHASE` (high-level phase changes)
-  - `ROSTER` (who’s in)
-
-- **Clients → Server**
-  - `JOIN` (initial + rejoin)
-  - `VOTE_SUBMIT` / `ANSWER` (user input)
-  - (Optional) `EMOTE`
-
-**Example flow (vote):**
-1. Host clicks “Start vote” on the TV.
-2. Server broadcasts `PROMPT { kind: 'VOTE', question, choices, deadline }`.
-3. Phones instantly swap to the **Vote** view.
-4. Phones send `VOTE_SUBMIT { choice }` over WS.
-5. Server tallies; on completion or timeout, sends `RESULT { kind: 'VOTE', totals }`.
-6. Phones switch to **Results** view; server moves to the next prompt/phase.
-
----
-
-## Event Reference (message names only)
-
-> Shapes are descriptive; use whatever fields you need. Keep it tiny.
-
-**Client → Server**
-- `JOIN` — `{ lobbyCode, name?, trait?, rejoinKey? }`
-- `VOTE_SUBMIT` — `{ choice }`
-- `ANSWER` — `{ payload }` (quiz/reflex/rhythm/etc.)
-
-**Server → Client**
-- `JOIN_OK` — `{ playerId, playerKey, snapshot: { phase, currentPrompt?, roster, serverNow } }` (snapshot sent to resync clients immediately)
-- `ROSTER` — `{ players: [{ id, name, trait, connected }, ...] }`
-- `PROMPT` — `{ kind: 'VOTE'|'QUIZ'|'REFLEX'|..., data, deadline }` (deadline is absolute epoch ms, server-enforced)
-- `RESULT` — e.g. `{ kind: 'VOTE', totals }`
-- `PHASE` — `{ name: 'lobby'|'playing'|'ended', detail? }`
-- (Optional) `TOAST` — `{ msg }`
-
----
-
-## Host Screen Expectations (`/server/home`)
-- Shows: lobby code, LAN URL/QR, roster list (live), Start button.
-- Reacts to `ROSTER` broadcasts and updates instantly.
-- After Start: displays the current phase/prompt and any timers.
-
-## Controller Screen Expectations (`/client/home`)
-- Shows join form until `JOIN_OK`.
-- After join: shows **Waiting** state.
-- On `PROMPT`: switch to the requested view (Vote/Quiz/etc.) immediately.
-- On `RESULT`: show result view, then await next `PROMPT`/`PHASE`.
-
----
-
-## Reconnect Behavior
-
-- If the app reloads or the phone sleeps/wakes:
-  - Reopen WS and send `JOIN` with `rejoinKey` from `localStorage`.
-  - Server reattaches the socket to the same player and sends the **current phase** so the UI can catch up.
+### 4) Handling Reconnection and State Sync
+- On page reload or if the connection is interrupted, the client will:
+  - Read the stored `playerKey` from local storage.
+  - Call the join endpoint to reattach to the game session.
+  - Retrieve the current game snapshot to resync the UI.
+- **Legacy Remains:**  
+  Some legacy WebSocket connection logic is still present in the frontend code. This code is being phased out and serves only as a transitional bridge until the migration is complete.
 
 ---
 
 ## Quick Test Plan
 
-- **Single join:** one phone joins; host sees it; Start becomes enabled.
-- **Multiple joins:** 3–4 phones; roster reflects names/traits instantly.
-- **Reconnect:** kill a phone’s WS (airplane mode), then return; it reclaims the same player.
-- **Prompt push:** start a vote; phones switch to the Vote view without reloading.
-- **Timeout:** let one phone not answer; server resolves on deadline and pushes Results.
+- **Lobby Creation:**  
+  Start the app and navigate to `/server/home`. Confirm that a lobby code, join URL, and QR code are presented and that the correct LAN IP is used.
+
+- **Player Join:**  
+  From a mobile device, navigate to `/client/home`, enter the required details, and join the lobby. Verify that the player appears in the lobby roster and that the start button is enabled when applicable.
+
+- **Data Sync:**  
+  After joining, trigger state changes (e.g., start the game, vote, etc.) and confirm that all clients reliably receive the updated game state from the backend.
+
+- **Reconnection:**  
+  Simulate a disconnection by refreshing the client page. Confirm that the stored `playerKey` is used to rejoin the lobby and that the UI correctly synchronizes with the current game state.
 
 ---
 
 ## Notes
 
-- IP address can be captured as **optional metadata** for diagnostics, but identity uses `playerKey`.
-- Keep everything **same-origin** (UI & WS on the same host/port) to avoid CORS headaches on LAN.
-- Show the **LAN URL + QR** prominently on the TV to make joining painless.
+- **Network:**  
+  The app is designed for LAN-only operation where all communication is same-origin. This avoids CORS issues and simplifies deployment in a local network environment.
+
+- **Transition Phase:**  
+  While the backend approach is now the primary communication method, engineers should note that the frontend may still contain vestiges of the old WebSocket-based code. These will be refactored out as the migration is finalized.
