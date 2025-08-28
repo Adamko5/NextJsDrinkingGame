@@ -5,12 +5,9 @@ import type { Snapshot } from '../../client/models';
 import { snapshotClient } from '../../client/api';
 
 /**
- * Context shape for providing the current game snapshot to consumer components.
- *
- * Consumers can read the latest snapshot, inspect loading or error state, and
- * trigger a manual refresh if desired. Components must be wrapped in a
- * {@link SnapshotProvider} to access this context via the {@link useSnapshot}
- * hook.
+ * The shape of the context value provided by {@link SnapshotProvider}.
+ * Consumers can read the latest snapshot, the loading/error state and
+ * trigger a manual refresh when needed.
  */
 export interface SnapshotContextValue {
   snapshot: Snapshot | null;
@@ -24,13 +21,19 @@ const SnapshotContext = createContext<SnapshotContextValue | undefined>(undefine
 export interface SnapshotProviderProps {
   children: React.ReactNode;
   /**
-   * Polling interval in milliseconds. Defaults to 500 (0.5 seconds). A
-   * shorter interval will produce more real‑time updates at the cost of more
+   * Polling interval in milliseconds. Defaults to 500ms. Use a shorter
+   * interval for more real‑time updates at the expense of additional
    * network requests.
    */
   intervalMs?: number;
 }
 
+/**
+ * Provides the current game snapshot to any descendant component. Internally
+ * this component polls the backend at the given interval and updates the
+ * context value whenever new data is fetched. Wrap any part of your app
+ * that needs access to the game state in this provider.
+ */
 export function SnapshotProvider({ children, intervalMs = 500 }: SnapshotProviderProps) {
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,7 +53,9 @@ export function SnapshotProvider({ children, intervalMs = 500 }: SnapshotProvide
   };
 
   useEffect(() => {
+    // Fetch immediately on mount
     fetchSnapshot();
+    // Then poll at the specified interval
     const id = setInterval(fetchSnapshot, intervalMs);
     return () => clearInterval(id);
   }, [intervalMs]);
@@ -65,6 +70,10 @@ export function SnapshotProvider({ children, intervalMs = 500 }: SnapshotProvide
   return <SnapshotContext.Provider value={value}>{children}</SnapshotContext.Provider>;
 }
 
+/**
+ * Consume the snapshot context. Components using this hook must be
+ * descendants of {@link SnapshotProvider}.
+ */
 export function useSnapshot(): SnapshotContextValue {
   const ctx = useContext(SnapshotContext);
   if (!ctx) {

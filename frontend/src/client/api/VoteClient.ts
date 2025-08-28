@@ -1,24 +1,14 @@
-import { Vote } from '../models';
+// Client for vote-related backend endpoints. Supports creating new votes,
+// retrieving all votes, and fetching a single vote by name/identifier.
 
-/**
- * Request body for adding a vote. A vote must specify the player who is
- * casting it via `byPlayer` and can either be binary (yes/no) or target
- * another player. Both `binary` and `forPlayer` are optional in the
- * request type because the frontend may allow the user to specify only
- * one at a time, but at least one must be provided when calling
- * {@link VoteClient.addVote}. The backend will treat a missing value as
- * null.
- */
+import type { Vote } from '../models';
+
 export interface AddVoteRequest {
   byPlayer: string;
   binary?: boolean | null;
   forPlayer?: string | null;
 }
 
-/**
- * Client for interacting with vote-related endpoints. Supports creating
- * votes, retrieving the map of all votes and looking up a single vote.
- */
 export default class VoteClient {
   private readonly baseUrl: string;
 
@@ -27,9 +17,8 @@ export default class VoteClient {
   }
 
   /**
-   * Add a new vote. The backend returns the persisted {@link Vote} on
-   * success. If both `binary` and `forPlayer` are undefined this method
-   * will throw synchronously to prevent sending an invalid request.
+   * Cast a new vote. Requires at least one of `binary` or `forPlayer` to
+   * be supplied. Returns the persisted {@link Vote} on success.
    */
   async addVote(req: AddVoteRequest): Promise<Vote> {
     const { byPlayer, binary = null, forPlayer = null } = req;
@@ -52,9 +41,8 @@ export default class VoteClient {
   }
 
   /**
-   * Retrieve all votes. The backend returns a map keyed by a vote name or
-   * identifier. This method resolves to a {@code Record<string, Vote>}
-   * containing all ongoing votes.
+   * Retrieve a map of all votes keyed by vote identifier. If no votes exist
+   * an empty object is returned.
    */
   async getVotes(): Promise<Record<string, Vote>> {
     const response = await fetch(`${this.baseUrl}/api/votes`, {
@@ -71,8 +59,8 @@ export default class VoteClient {
   }
 
   /**
-   * Retrieve a single vote by its name/identifier. If the vote does not
-   * exist the backend returns a 404 and this method will reject.
+   * Fetch a single vote by its name or identifier. Rejects if the vote is
+   * not found (404) or another error occurs.
    */
   async getVote(name: string): Promise<Vote> {
     const response = await fetch(`${this.baseUrl}/api/votes/${encodeURIComponent(name)}`, {

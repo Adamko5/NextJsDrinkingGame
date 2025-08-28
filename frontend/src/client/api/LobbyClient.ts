@@ -1,4 +1,8 @@
-import { Lobby } from '../models';
+// API client for lobby management. Provides methods to create a lobby,
+// retrieve the current lobby state, start the lobby, and advance the game
+// phase. See `../models` for the associated types.
+
+import type { Lobby } from '../models';
 
 export default class LobbyClient {
   private readonly baseUrl: string;
@@ -7,6 +11,9 @@ export default class LobbyClient {
     this.baseUrl = baseUrl;
   }
 
+  /**
+   * Create a new lobby on the backend. Returns the created lobby object.
+   */
   async createLobby(): Promise<Lobby> {
     const response = await fetch(`${this.baseUrl}/api/lobby`, {
       method: 'POST',
@@ -21,6 +28,9 @@ export default class LobbyClient {
     return data as Lobby;
   }
 
+  /**
+   * Retrieve the currently active lobby. Returns `null` if no lobby exists.
+   */
   async getLobby(): Promise<Lobby | null> {
     const response = await fetch(`${this.baseUrl}/api/lobby`, {
       method: 'GET',
@@ -35,6 +45,10 @@ export default class LobbyClient {
     return data as Lobby | null;
   }
 
+  /**
+   * Transition the lobby from the waiting state into the playing state.
+   * Returns a plain string on success.
+   */
   async startLobby(): Promise<string> {
     const response = await fetch(`${this.baseUrl}/api/lobby/start`, {
       method: 'POST',
@@ -48,6 +62,9 @@ export default class LobbyClient {
     return response.text();
   }
 
+  /**
+   * Advance the game phase by one. This is typically called by the host.
+   */
   async advancePhase(): Promise<string> {
     const response = await fetch(`${this.baseUrl}/api/lobby/advancePhase`, {
       method: 'POST',
@@ -61,13 +78,20 @@ export default class LobbyClient {
     return response.text();
   }
 
+  /**
+   * Advance the game phase by a specific amount. Accepts an integer query
+   * parameter `advanceBy` which must be encoded into the URL.
+   */
   async advancePhaseBy(advanceBy: number): Promise<string> {
-    const response = await fetch(`${this.baseUrl}/api/lobby/advancePhaseBy?advanceBy=${encodeURIComponent(advanceBy)}`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'text/plain',
+    const response = await fetch(
+      `${this.baseUrl}/api/lobby/advancePhaseBy?advanceBy=${encodeURIComponent(advanceBy)}`,
+      {
+        method: 'POST',
+        headers: {
+          'Accept': 'text/plain',
+        },
       },
-    });
+    );
     if (!response.ok) {
       throw new Error(`Failed to advance phase by ${advanceBy}: ${response.status} ${response.statusText}`);
     }

@@ -1,3 +1,8 @@
+// This file defines the TypeScript interfaces and enums representing the
+// data structures exchanged between the frontend and backend. Having a
+// strongly typed contract makes it easy to reason about the shape of
+// responses and ensures the API clients return consistent data.
+
 export interface GameClass {
   name: string;
   description: string;
@@ -30,6 +35,6 @@ export interface Vote {
 export interface Snapshot {
   players: Player[];
   lobby: Lobby | null;
-  // Kotlin uses ConcurrentHashMap<String, Vote>; model this as a Record/Map
+  // Kotlin uses ConcurrentHashMap ; model this as a Record/Map
   votes: Record<string, Vote>;
 }

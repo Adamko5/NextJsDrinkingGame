@@ -1,18 +1,11 @@
-import { Snapshot } from '../models';
+// API client for retrieving the current game snapshot. A snapshot
+// contains the complete game state including lobby metadata, players
+// and votes. See `../models` for the interface definitions.
 
-/**
- * Service responsible for retrieving the latest snapshot of the game from
- * the backend. A snapshot contains the lobby information, all players and
- * current votes. See {@link Snapshot} for the shape of the returned
- * object.
- */
+import type { Snapshot } from '../models';
+
 export default class SnapshotClient {
-  /**
-   * Base URL prefix for all API calls. If left empty the client will
-   * perform relative fetches (e.g. `/api/snapshot`) against the same
-   * origin. Set this to the backend host when using a separate frontend
-   * and backend origin.
-   */
+  /** Base URL prefix for all API calls. If left empty requests will be relative. */
   private readonly baseUrl: string;
 
   constructor(baseUrl: string = '') {
@@ -22,9 +15,8 @@ export default class SnapshotClient {
   /**
    * Fetch the current snapshot from the backend.
    *
-   * @returns A Promise resolving to a {@link Snapshot} object. Rejects if
-   *          the network request fails or the backend returns a non-2xx
-   *          status code.
+   * @returns A promise resolving to a {@link Snapshot} object. Rejects
+   *          if the network request fails or the response is non‑2xx.
    */
   async getSnapshot(): Promise<Snapshot> {
     const response = await fetch(`${this.baseUrl}/api/snapshot`, {

@@ -1,4 +1,7 @@
-import { Player } from '../models';
+// API client for player management. Provides methods for adding a new
+// player to the lobby and retrieving player information.
+
+import type { Player } from '../models';
 
 export interface AddPlayerRequest {
   name: string;
@@ -12,6 +15,10 @@ export default class PlayerClient {
     this.baseUrl = baseUrl;
   }
 
+  /**
+   * Add a player to the current lobby. Returns the newly created
+   * {@link Player} object.
+   */
   async addPlayer(req: AddPlayerRequest): Promise<Player> {
     const response = await fetch(`${this.baseUrl}/api/players`, {
       method: 'POST',
@@ -28,6 +35,9 @@ export default class PlayerClient {
     return data as Player;
   }
 
+  /**
+   * Retrieve the list of all players currently joined in the lobby.
+   */
   async getPlayers(): Promise<Player[]> {
     const response = await fetch(`${this.baseUrl}/api/players`, {
       method: 'GET',
@@ -42,6 +52,9 @@ export default class PlayerClient {
     return data as Player[];
   }
 
+  /**
+   * Fetch a single player by name. Rejects if the player does not exist.
+   */
   async getPlayer(playerName: string): Promise<Player> {
     const response = await fetch(`${this.baseUrl}/api/players/${encodeURIComponent(playerName)}`, {
       method: 'GET',

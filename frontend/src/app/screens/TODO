@@ -19,6 +19,7 @@ Implementation steps:
             that builds the LAN ip. You can keep that, edit it,
             or even edit the util for the IP in ../../../util/ip-picker, if you need it
     Voting1 screen and it's components in ./server/voting1
+3. Add the screens to the router's phaseMap in ../router/phaseMap.tsx
 
 Constraints and notes:
 1. You should use the styles defined in ../../styles
