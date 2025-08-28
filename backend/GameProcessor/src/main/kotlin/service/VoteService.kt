@@ -14,6 +14,7 @@ class VoteService (private val playerService: PlayerService){
     fun addVote(byPlayer: String,
                 binary: Boolean?,
                 forPlayer: String?): Vote {
+        log.info("Adding vote by player {} for binary {} for player {}", byPlayer, binary, forPlayer)
         val forPlayer = playerService.getPlayer(forPlayer) ?: throw IllegalArgumentException("Player not found")
         val vote = Vote (binary = binary, forPlayer = forPlayer)
         votes[byPlayer] = vote

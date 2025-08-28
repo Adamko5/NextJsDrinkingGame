@@ -51,7 +51,7 @@ REM ----------------------------
 REM 7. Get a Single Player
 REM ----------------------------
 echo Getting a Player...
-curl http://localhost:8080/api/players/John Doe
+curl http://localhost:8080/api/players/John%20Doe
 echo.
 pause
 
@@ -59,7 +59,7 @@ REM ----------------------------
 REM 8. Add a Vote
 REM ----------------------------
 echo Adding a Vote...
-curl -X POST http://localhost:8080/api/votes -H "Content-Type: application/json" -d "{\"byPlayer\":\"John Doe\", \"binary\":true, \"forPlayerId\":\"John Doe\"}"
+curl -X POST http://localhost:8080/api/votes -H "Content-Type: application/json" -d "{\"byPlayer\":\"John Doe\", \"binary\":true, \"forPlayer\":\"John Doe\"}"
 echo.
 pause
 
@@ -75,7 +75,7 @@ REM ----------------------------
 REM 10. Get a Vote
 REM ----------------------------
 echo Getting a Vote...
-curl TODO get by player name (John Doe)
+curl http://localhost:8080/api/votes/John%20Doe
 echo.
 pause
 

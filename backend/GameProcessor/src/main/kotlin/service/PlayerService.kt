@@ -25,7 +25,23 @@ class PlayerService {
         return player
     }
 
-    fun getPlayers(): List<Player> = players.values.toList()
+fun getPlayers(): List<Player> { 
+    val playerList = players.values.toList()
+    log.info("Retrieved {} players", playerList.size)
+    return playerList
+}
 
-    fun getPlayer(name: String?): Player? = players[name]
+fun getPlayer(name: String?): Player? { 
+    if (name == null) { 
+        log.warn("Attempted to get a player with null name; returning null")
+        return null
+    }
+    val player = players[name]
+    if (player != null) {
+        log.info("Player found for name {}: {}", name, player)
+    } else {
+        log.info("No player found for name {}", name)
+    }
+    return player
+}
 }
