@@ -10,7 +10,7 @@ This will include:
 TODO List:
     1. DONE - Read and implement the TODO list in ./client
 
-    2. Check the global color scheme and style:
+    2. DONE - Check the global color scheme and style:
         This is defined in /styles.
         Im going for a blue color profile, your job is to
             fine tune the color or think about the
