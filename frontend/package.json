@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production node server.js",
+    "test-apis": "ts-node src/client/TestApis.ts"
   },
   "dependencies": {
     "next": "15.5.0",
