@@ -1,22 +1,37 @@
-/* Modern blue / light-blue theme tokens
-   Use these CSS custom properties throughout the app for a consistent theme.
-   Includes a primary blue palette, an accent/cyan palette, neutral tokens,
-   semantic tokens, and a few ready-to-use gradient helpers.
-*/
-:root {
-  /* Primary blue palette (good for primary buttons, links, highlights) */
-  --blue-50:  #f0f9ff;
-  --blue-100: #e0f2fe;
-  --blue-200: #bae6fd;
-  --blue-300: #7dd3fc;
-  --blue-400: #38bdf8;
-  --blue-500: #0ea5e9; /* primary */
-  --blue-600: #0284c7;
-  --blue-700: #0369a1;
-  --blue-800: #075985;
-  --blue-900: #0b4a6f;
+/*
+  Global theme variables for the drinking game frontend.
 
-  /* Accent / cyan palette (works well in gradients with blue) */
+  The goal of this file is to centralise colour definitions so that
+  individual components can consume a consistent palette without
+  hard‑coding values.  By defining CSS custom properties on :root we
+  automatically expose them to every CSS module – simply reference
+  them via the `var(--token)` syntax.
+
+  The palette here is tuned towards a modern, uplifting blue profile.  We
+  favour mid‑tones around the 400–600 range for primary actions and
+  provide a complementary cyan accent for highlights and gradients.  A
+  neutral grey scale rounds out the set for backgrounds and text.  You
+  can adjust these values to tweak the overall look of the app without
+  touching component styles.
+*/
+
+:root {
+  /* Primary blue palette (used for buttons, highlights, and links).  These
+     values are inspired by Tailwind’s blue scale but adjusted slightly
+     towards indigo for better contrast on light backgrounds. */
+  --blue-50:  #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+  --blue-300: #93c5fd;
+  --blue-400: #60a5fa;
+  --blue-500: #3b82f6; /* primary */
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-800: #1e40af;
+  --blue-900: #1e3a8a;
+
+  /* Accent / cyan palette.  These hues pair nicely with the primary
+     palette in gradients and calls to action. */
   --cyan-50:  #ecfeff;
   --cyan-100: #cffafe;
   --cyan-200: #a5f3fc;
@@ -28,7 +43,8 @@
   --cyan-800: #155e75;
   --cyan-900: #164e63;
 
-  /* Neutrals */
+  /* Neutrals – a grey scale for backgrounds and text.  We pick neutral
+     shades with a slight blue undertone to harmonise with the palette. */
   --neutral-50:  #f8fafc;
   --neutral-100: #f1f5f9;
   --neutral-200: #e2e8f0;
@@ -38,37 +54,39 @@
   --neutral-600: #475569;
   --neutral-700: #334155;
   --neutral-800: #1f2937; /* body text */
-  --neutral-900: #0f1724;
+  --neutral-900: #0f172a;
 
-  /* Semantic */
-  /* Use a softer background and surface to make the UI feel more relaxed on large displays
-     and handheld devices. The text colour is slightly lighter to improve contrast
-     against the new background. */
-  --bg: var(--blue-50);
+  /* Semantic tokens.  These map high‑level concepts to specific colours.
+     Changing these values will cascade throughout the UI via the
+     variables above. */
+  --bg:     var(--blue-50);
   --surface: var(--neutral-50);
-  --text: var(--neutral-700);
-  --muted: var(--neutral-500);
+  --text:   var(--neutral-700);
+  --muted:  var(--neutral-500);
   --border: var(--neutral-200);
   --success: #10b981;
   --danger:  #ef4444;
 
-  /* Focus / interactive */
-  --focus-ring: rgba(14,165,233,0.22); /* semi-transparent primary */
+  /* Interactive focus ring.  Using a translucent primary colour ensures
+     accessibility while keeping the visual weight light. */
+  --focus-ring: rgba(59, 130, 246, 0.22);
 
-  /* Gradients */
+  /* Gradients.  Pre‑defined linear gradients are useful for buttons,
+     headers, or backgrounds. */
   --gradient-primary: linear-gradient(135deg, var(--blue-400) 0%, var(--blue-600) 100%);
   --gradient-cool:    linear-gradient(135deg, var(--cyan-300) 0%, var(--blue-500) 100%);
   --gradient-soft:    linear-gradient(180deg, var(--blue-50) 0%, var(--cyan-50) 100%);
 
-  /* Convenience aliases */
-  /* Lighten the primary and accent colours for a friendlier look */
-  --primary: var(--blue-400);
-  --primary-600: var(--blue-500);
-  --accent: var(--cyan-400);
-  --glass: rgba(255,255,255,0.6);
+  /* Convenience aliases for the most commonly used colours. */
+  --primary:     var(--blue-500);
+  --primary-600: var(--blue-600);
+  --accent:      var(--cyan-400);
+  --glass:       rgba(255, 255, 255, 0.6);
 }
 
-/* Small helpers */
+/* Helper utility classes.  These can be applied directly in JSX to
+   quickly add gradient backgrounds or focus outlines without
+   repeating long CSS declarations. */
 .theme-gradient-primary {
   background-image: var(--gradient-primary);
 }
@@ -78,5 +96,6 @@
 }
 
 .theme-focus {
+  /* A thicker outline helps keyboard users navigate. */
   box-shadow: 0 0 0 4px var(--focus-ring);
 }
