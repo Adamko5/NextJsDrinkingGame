@@ -1,0 +1,20 @@
+This /router directory will be used for page routing.
+
+Context:
+I have some pages and their unique components defined.
+Client and Server pages are different, so they are stored in
+    directories ../screens/client and ../screens/server.
+I need to implement something that will route the pages based on
+    the state that is managed in ../state.
+
+Implementation should contain:
+1. Definition of what screens belong to what phases.
+    Phases use numbers as ID
+    This will be the only place where the screens are
+        connected to phase number.
+    Every phase number should have corresponding:
+        1 server screen and 1 client screen
+2. Maybe a single file that reads the state from ../state,
+    and routes the correct screen.
+    In this step, I need creativity and comparison of multiple approaches.
+    Your job is to think about this, analyze this and then implement this.
