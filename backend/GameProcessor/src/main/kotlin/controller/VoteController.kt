@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.concurrent.ConcurrentHashMap
 
 @RestController
 @RequestMapping("/api/votes")
@@ -20,7 +21,7 @@ class VoteController(private val voteService: VoteService) {
     }
 
     @GetMapping
-    fun getVotes(): ResponseEntity<List<Vote>> {
+    fun getVotes(): ResponseEntity<ConcurrentHashMap<String, Vote>?> {
         return ResponseEntity.ok(voteService.getVotes())
     }
 

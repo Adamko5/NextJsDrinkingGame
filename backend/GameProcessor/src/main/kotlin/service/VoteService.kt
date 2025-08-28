@@ -22,7 +22,7 @@ class VoteService (private val playerService: PlayerService){
         return vote
     }
 
-    fun getVotes(): List<Vote> = votes.values.toList()
+    fun getVotes(): ConcurrentHashMap<String, Vote> = votes
 
     fun clearVotes() {
         votes.clear()

@@ -1,7 +1,9 @@
 package com.example.model
 
+import java.util.concurrent.ConcurrentHashMap
+
 data class Snapshot(
     val players: List<Player>,
     val lobby: Lobby?,
-    val votes: List<Vote>
+    val votes: ConcurrentHashMap<String, Vote>
 )

@@ -2,11 +2,7 @@ This TODO is scoped for the current /client directory.
 This directory should contain everything that the frontend needs
     to get data from the backend (models, service to fetch data)
 
-1. Define Frontend Data Models
-   - Create models for Player, Lobby, Vote, and
-     Snapshot that mirror the backend counterparts.
-   - Ensure property names and types match those defined
-     in the backend.
+1. Read the models for the data defined in ./models.ts
 
 2. Implement a Snapshot API Client
    - Create a new file (e.g., SnapshotClient.js/ts)
@@ -20,26 +16,14 @@ This directory should contain everything that the frontend needs
 
 Quick summary of what the expectation could look like:
 
-- models/Player.js/Player.ts
-  - Defines the Player data model.
-
-- models/Lobby.js/Lobby.ts
-  - Defines the Lobby data model.
-
-- models/Vote.js/Vote.ts
-  - Defines the Vote data model.
-
-- models/Snapshot.js/Snapshot.ts
-  - Defines the Snapshot data model.
-
-- api/SnapshotClient.js/SnapshotClient.ts
+- api/SnapshotClient.ts
   - Client that calls the GET /snapshot endpoint and returns a Snapshot.
 
-- api/LobbyClient.js/LobbyClient.ts
+- api/LobbyClient.ts
   - Client for lobby endpoints (e.g., create lobby, get lobby, start lobby).
 
-- api/PlayerClient.js/PlayerClient.ts
+- api/PlayerClient.ts
   - Client for player endpoints (e.g., add player, get all players, get a single player).
 
-- api/VoteClient.js/VoteClient.ts
+- api/VoteClient.ts
   - Client for vote endpoints (e.g., add vote, get all votes, get a vote).
