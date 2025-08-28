@@ -1,0 +1,44 @@
+/*
+  Styles for the Toast notification component.  Toasts appear
+  fixed in the bottom right of the viewport with a coloured
+  accent bar indicating the message type.  Only one toast is
+  designed to be visible at a time; if you need a queue you can
+  wrap multiple toasts in a provider component.
+*/
+
+.toast {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: var(--surface);
+  color: var(--text);
+  border-left: 4px solid var(--primary);
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+/* Info messages use the default primary accent. */
+.info {
+  border-left-color: var(--primary);
+}
+
+/* Success messages use the success colour. */
+.success {
+  border-left-color: var(--success);
+}
+
+/* Warning messages use a cyan accent defined in the theme. */
+.warning {
+  border-left-color: var(--accent);
+}
+
+/* Error messages use the danger colour. */
+.error {
+  border-left-color: var(--danger);
+}

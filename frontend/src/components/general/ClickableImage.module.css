@@ -1,0 +1,19 @@
+/*
+  Styles for the ClickableImage component.  Applies a consistent
+  rounded border, pointer cursor and subtle hover interaction.
+*/
+
+.image {
+  display: inline-block;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  object-fit: cover;
+  max-width: 100%;
+  height: auto;
+}
+
+.image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

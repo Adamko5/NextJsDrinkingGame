@@ -17,7 +17,7 @@ TODO List:
             technical definition of it.
         My goal is to have "variables" usable for my .css files.
 
-    3. Read and implement the TODO list in ./components/general
+    3. DONE - Read and implement the TODO list in ./components/general
 
     4. Read and implement the TODO list in ./app/state
 

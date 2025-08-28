@@ -1,0 +1,19 @@
+/*
+  Styles for the Loader component.  Uses a simple spinning
+  animation implemented via keyframes.  The border colours are set
+  inline on the element to allow customisation from props.
+*/
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  border: 4px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spinner 0.8s linear infinite;
+  display: inline-block;
+}

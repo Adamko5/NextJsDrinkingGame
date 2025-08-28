@@ -1,0 +1,21 @@
+/*
+  Styles for the Label component.  Labels are inline‑flex to
+  vertically align properly with their contents.  A required
+  indicator is coloured using the danger palette.
+*/
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0.25rem;
+}
+
+.required {
+  color: var(--danger);
+  margin-left: 0.25rem;
+  font-size: 1rem;
+  line-height: 1;
+}

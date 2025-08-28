@@ -1,0 +1,13 @@
+/*
+  Styles for the Icon component.  Provides a flexible inline container
+  ensuring icons align nicely with surrounding text.  The actual
+  sizing and colour are controlled via inline styles passed from
+  the component props.
+*/
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
