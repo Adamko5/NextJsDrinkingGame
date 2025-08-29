@@ -2,15 +2,9 @@
 
 import React from 'react';
 import styles from './Roster.module.css';
-
-/**
- * Represents a player in the lobby.  The avatar may be omitted,
- * in which case an initial derived from the player name is used.
- */
-export interface Player {
-  name: string;
-  avatarUrl?: string;
-}
+import { GameClasses, getClassByName } from '@/constants/classes';
+import { Player } from '@/client/models';
+import Label from '@/components/general/Label';
 
 export interface RosterProps {
   players: Player[];
@@ -28,21 +22,15 @@ const Roster: React.FC<RosterProps> = ({ players }) => {
   }
   return (
     <div className={styles.container}>
-      {players.map((player, idx) => {
-        const initial = player.name.charAt(0).toUpperCase();
+      {players.map((player: Player, idx) => {
         return (
           <div key={idx} className={styles.player}>
-            {player.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={player.avatarUrl}
-                alt={player.name}
-                className={styles.avatar}
-              />
-            ) : (
-              <div className={styles.avatar}>{initial}</div>
-            )}
-            <div className={styles.name}>{player.name}</div>
+            <img
+              src={getClassByName(player.gameClass.name)?.imageSrc}
+              alt={player.name}
+              className={styles.avatar}
+            />
+            <Label className={styles.name}>{player.name}</Label>
           </div>
         );
       })}

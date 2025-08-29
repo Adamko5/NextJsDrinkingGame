@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    cors:
+      allowed-origins: "*"
+      allowed-methods:
+        - GET
+        - POST
+        - PUT
+        - PATCH
+        - DELETE
+        - OPTIONS
+      allowed-headers: "*"
+      exposed-headers: "*"
+      allow-credentials: true
+
+logging:
+  level:
+    root: INFO
+    com.example: DEBUG

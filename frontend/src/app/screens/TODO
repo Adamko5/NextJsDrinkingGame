@@ -1,7 +1,0 @@
-1. The variables in the /styles directory dont work in any of the .css files in the screens.
-  I dont understand .css architectures, so look at how it is done.
-  Examine the /styles folder and try to fix my problems with the defined colors and variables not having effect.
-2. The client/home/components/ClassPicker.tsx should display only 1 class at a time.
-  There should be arrows on the left and right, that toggle the next available class.
-3. In server/home/Home.tsx, navigate to the TODO and implement it
-  You will need to get the snapshot using the useSnapshot.

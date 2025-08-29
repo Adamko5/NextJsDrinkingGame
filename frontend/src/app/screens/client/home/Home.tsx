@@ -6,6 +6,8 @@ import Label from '../../../../components/general/Label';
 import Button from '../../../../components/general/Button';
 import ClassPicker from './components/ClassPicker';
 import styles from './Home.module.css';
+import { playerClient } from '../../../../client/api/index';
+import { GameClasses } from '@/constants/classes';
 
 /**
  * The Home screen presented to players on their phones.  It allows
@@ -16,7 +18,7 @@ import styles from './Home.module.css';
  */
 export default function ClientHome() {
   const [name, setName] = useState('');
-  const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [selectedClass, setSelectedClass] = useState<string>(GameClasses[0].name);
 
   /**
    * Handles submission of the join form.  In a real application
@@ -30,10 +32,8 @@ export default function ClientHome() {
       alert('Please enter your name before joining.');
       return;
     }
-    // TODO: integrate with backend: POST /api/players with name & class
     console.log('[ClientHome] joining with', { name, class: selectedClass });
-    // In a real app you would probably store a playerKey in
-    // localStorage and navigate to the next screen automatically.
+    playerClient.addPlayer({name, gameClassName: selectedClass});
   }
 
   return (

@@ -55,3 +55,31 @@
   object-fit: contain;
   margin-bottom: 0.5rem;
 }
+
+/* New styles to support the single-card carousel view. */
+
+/* Wraps the arrows and card horizontally with spacing */
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Basic styling for the navigation arrows.  We use transparent
+   backgrounds so they blend into the card container. */
+.arrow {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}

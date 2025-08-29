@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8081",
+    "dev": "next dev -p 8081 --turbopack",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "test-apis": "ts-node src/client/TestApis.ts"

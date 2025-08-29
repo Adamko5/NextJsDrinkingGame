@@ -27,7 +27,7 @@ class PlayerService {
 
 fun getPlayers(): List<Player> { 
     val playerList = players.values.toList()
-    log.info("Retrieved {} players", playerList.size)
+//    log.info("Retrieved {} players", playerList.size)
     return playerList
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense } from "react";
-import { useSnapshot } from "../state/SnapshotContext";
+import { SnapshotContextValue, useSnapshot } from "../state/SnapshotContext";
 import { phaseMap, Role } from "./phaseMap";
 
 export interface RouterProps {
@@ -10,7 +10,7 @@ export interface RouterProps {
 }
 
 export default function Router({ role, fallback }: RouterProps) {
-  const { snapshot, error } = useSnapshot();
+  const { snapshot, error } : SnapshotContextValue = useSnapshot();
 
   // Show fallback only if snapshot is not yet loaded.
   if (!snapshot) {
