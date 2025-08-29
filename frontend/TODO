@@ -27,8 +27,11 @@ TODO List:
 
     7. Implement the final steps to get the app working using Next.js conventions. This means you need to set up the app's entry point according to Next.js standards.
 
-       Implementation steps:
-           1. Create a custom _app.tsx file in the pages (or app) directory. This file should serve as the root component for all pages.
-              - Wrap the application with any necessary providers (for example, the SnapshotProvider and the Router) to ensure global state and routing are available for every page.
-           2. Ensure that the necessary Next.js page(s) render the initial view by importing and integrating the custom Router component defined in /src/app/router/Router.tsx.
-           3. Update the "dev" script in package.json to start the Next.js development server (e.g., "next dev") instead of directly running index.js.
+        Implementation steps:
+            1. Create a custom _app.tsx file in the pages directory.
+                This file should serve as the root component for all pages.
+            2. Expose 2 endpoints on the 8081 port:
+                /server - should return the Router in the server mode
+                /client - should return the Router in the client mode
+            3. Wrap the Routers with the SnapshotProvider 
+            4. Prepare the "dev" script in package.json to start the Next.js development server
