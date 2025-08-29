@@ -1,0 +1,48 @@
+/*
+  Styles for the client home screen. This file defines a simple
+  centred form layout that takes advantage of the global theme
+  variables defined in `src/styles/theme.css`. Inputs, buttons and
+  pickers are aligned vertically with consistent spacing and adapt
+  gracefully to different screen sizes. The overall container
+  constrains the maximum width on larger displays while letting
+  mobile phones take up the full width.
+*/
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.card {
+  width: 100%;
+  max-width: 28rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.field {
+  margin-bottom: 1.25rem;
+  width: 100%;
+}
+
+.actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}

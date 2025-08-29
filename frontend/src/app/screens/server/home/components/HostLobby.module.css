@@ -1,0 +1,39 @@
+/*
+  Styles for the HostLobby component.  The QR code is centred with
+  some margin and the join URL is presented below in a monospace
+  style to aid readability and copying.  The card uses the
+  application theme for borders and background.
+*/
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.qr {
+  width: 8rem;
+  height: 8rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+  background-color: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.url {
+  font-family: monospace;
+  word-break: break-all;
+  color: var(--primary-600);
+}
+
+.label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--muted);
+}

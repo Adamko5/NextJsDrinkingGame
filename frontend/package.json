@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node TODO add the app's starting point here",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "test-apis": "ts-node src/client/TestApis.ts"

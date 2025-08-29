@@ -1,0 +1,36 @@
+/*
+  Styles for the server home page.  The host lobby and roster are
+  vertically stacked and centred on the page.  The background
+  colour and text colours are drawn from the global theme.  A
+  maximum width constrains the content on large displays while
+  maintaining responsiveness on smaller screens.
+*/
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background-color: var(--bg);
+  color: var(--text);
+  gap: 2rem;
+}
+
+.section {
+  width: 100%;
+  max-width: 40rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}

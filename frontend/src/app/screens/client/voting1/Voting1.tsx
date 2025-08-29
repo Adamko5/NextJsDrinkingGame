@@ -1,49 +1,53 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
+import Button from '../../../../components/general/Button';
 import styles from './Voting1.module.css';
 
-export default function Screen1() {
-  const [selected, setSelected] = React.useState<'yes'|'no'|null>(null);
+/**
+ * Helper that would send a vote to the backend.  In this stub
+ * implementation we simply log to the console and return true.
+ */
+function sendVote(payload: { answer: 'yes' | 'no' | null }): boolean {
+  console.log('[Voting1] sending vote', payload);
+  // TODO: integrate with backend via fetch or other API
+  return true;
+}
 
-  function submit(answer?: 'yes' | 'no' | null) {
-    // Use the explicit answer when provided to avoid reading stale state
-    // immediately after calling setSelected. Also update the local state
-    // so the UI reflects the chosen option.
-    const ans = typeof answer === 'undefined' ? selected : answer;
-    setSelected(ans);
-    // Send a structured VOTE message to the server. Use the helper for
-    // consistent logging and safe delivery.
-    const payload = { answer: ans };
-    const ok = sendVote(payload);
-    if (ok) {
-      console.log('[Screen1] vote sent', payload);
-    } else {
-      console.warn('[Screen1] vote NOT sent (socket closed)', payload);
-    }
+/**
+ * The first voting screen for players.  Displays a simple yes/no
+ * prompt along with two buttons.  The user’s selection is
+ * highlighted and subsequent taps update the selection.  When a
+ * vote is submitted it is sent via the helper above.
+ */
+export default function ClientVoting1() {
+  const [selected, setSelected] = useState<'yes' | 'no' | null>(null);
+
+  function handleVote(answer: 'yes' | 'no') {
+    setSelected(answer);
+    // Persist the vote immediately to avoid double taps or stale state
+    sendVote({ answer });
   }
 
   return (
     <div className={styles.container}>
-      <div>
+      <div className={styles.card}>
         <div className={styles.title}>Cast your vote</div>
         <div className={styles.subtitle}>Tap to choose Yes or No</div>
-      </div>
-
-      <div className={styles.buttons}>
-        <button
-          className={`${styles.btn} ${styles.yes} ${selected === 'yes' ? styles.selected : ''}`}
-          onClick={() => submit('yes')}
-        >
-          YES
-        </button>
-
-        <button
-          className={`${styles.btn} ${styles.no} ${selected === 'no' ? styles.selected : ''}`}
-          onClick={() => submit('no')}
-        >
-          NO
-        </button>
+        <div className={styles.buttons}>
+          <Button
+            label="YES"
+            variant={selected === 'yes' ? 'primary' : 'secondary'}
+            className={styles.voteButton}
+            onClick={() => handleVote('yes')}
+          />
+          <Button
+            label="NO"
+            variant={selected === 'no' ? 'primary' : 'secondary'}
+            className={styles.voteButton}
+            onClick={() => handleVote('no')}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,59 +1,53 @@
+/*
+  Styles for the client voting screen.  The container centres its
+  content and limits the width on larger devices.  Buttons grow
+  automatically to fill the available width and wrap on smaller
+  screens.  The selected answer is emphasised by applying the
+  primary gradient as a background colour.
+*/
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  padding: 24px;
-  gap: 18px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.card {
+  width: 100%;
+  max-width: 24rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .title {
-  font-size: 20px;
-  color: var(--text, #e6eef8);
-  font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .subtitle {
-  font-size: 13px;
-  color: var(--muted, #94a3b8);
+  margin-bottom: 1.5rem;
+  color: var(--muted);
+  font-size: 0.875rem;
 }
 
 .buttons {
-  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.btn {
-  width: 100%;
-  padding: 18px 12px;
-  border-radius: 12px;
-  border: none;
-  font-size: 20px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 18px rgba(2,6,23,0.35);
-}
-
-.yes {
-  background: linear-gradient(90deg, var(--accent, #60a5fa), #3b82f6);
-  color: white;
-}
-
-.no {
-  background: linear-gradient(90deg, #ef4444, #dc2626);
-  color: white;
-}
-
-.selected {
-  outline: 3px solid rgba(255,255,255,0.06);
-  transform: translateY(-2px);
-}
-
-@media (min-width: 700px) {
-  .container { max-width: 420px; margin: 0 auto }
+.voteButton {
+  flex: 1 1 calc(50% - 0.5rem);
+  min-width: 7rem;
 }
