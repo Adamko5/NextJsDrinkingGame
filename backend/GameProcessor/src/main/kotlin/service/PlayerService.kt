@@ -1,6 +1,6 @@
 package com.example.service
 
-import com.example.constants.GameClasses
+import com.example.model.GameClass
 import com.example.model.Player
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -17,7 +17,7 @@ class PlayerService {
             throw IllegalArgumentException("Player with name $name already exists")
         }
 
-        val gameClass = GameClasses.getClassByName(gameClassName) ?: throw IllegalArgumentException("Game class not found")
+        val gameClass = GameClass(gameClassName)
         val playerKey = UUID.randomUUID().toString().replace("-", "").substring(0, 8)
         val player = Player(name = name, gameClass = gameClass, playerKey = playerKey)
         players[name] = player

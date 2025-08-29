@@ -50,7 +50,7 @@ export default function ClientHome() {
           />
         </div>
         <div className={styles.field}>
-          <Label>Select your class (optional)</Label>
+          <Label required>Select your class</Label>
           <ClassPicker value={selectedClass} onChange={setSelectedClass} />
         </div>
         <div className={styles.actions}>

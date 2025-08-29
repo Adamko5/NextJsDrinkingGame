@@ -10,12 +10,14 @@ export interface RouterProps {
 }
 
 export default function Router({ role, fallback }: RouterProps) {
-  const { snapshot, loading, error } = useSnapshot();
+  const { snapshot, error } = useSnapshot();
 
-  if (loading || !snapshot) {
+  // Show fallback only if snapshot is not yet loaded.
+  if (!snapshot) {
     return <>{fallback ?? <div>Loading…</div>}</>;
   }
 
+  // Error check
   if (error) {
     return <div>Error: {error.message}</div>;
   }

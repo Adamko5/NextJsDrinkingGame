@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import HostLobby from './components/HostLobby';
 import Roster, { Player } from './components/Roster';
 import styles from './Home.module.css';
+import { useSnapshot } from "../../../state/SnapshotContext";
 
 /**
  * The server home page displayed on the TV.  It shows the join
@@ -14,6 +15,7 @@ import styles from './Home.module.css';
  */
 export default function ServerHomePage() {
   const [players, setPlayers] = useState<Player[]>([]);
+  //TODO use useSnapshot to get real players
 
   // Construct the join URL based on the current host and port.
   const [joinUrl, setJoinUrl] = useState('');
@@ -23,23 +25,8 @@ export default function ServerHomePage() {
     const host = typeof window !== 'undefined' && window.location.hostname
       ? window.location.hostname
       : 'localhost';
-    const port = process.env.PORT || '3000';
-    setJoinUrl(`http://${host}:${port}/client/home`);
-  }, []);
-
-  // In lieu of a backend, simulate players joining after a delay.
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Example players – in a real app this data would come from the
-      // server snapshot.  Push a new player only if the roster is empty
-      // to prevent repeated additions on re-render.
-      setPlayers((prev) => (prev.length === 0 ? [
-        { name: 'Alice' },
-        { name: 'Bob' },
-        { name: 'Carol' },
-      ] : prev));
-    }, 2000);
-    return () => clearTimeout(timer);
+    const port = process.env.PORT || '8081';
+    setJoinUrl(`http://${host}:${port}/client`);
   }, []);
 
   return (

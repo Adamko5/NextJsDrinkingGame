@@ -2,25 +2,10 @@
 
 import React from 'react';
 import styles from './ClassPicker.module.css';
+import { GameClasses } from '../../../../../constants/classes';
+import { GameClass } from '../../../../../client/models';
+import Label from '@/components/general/Label';
 
-/**
- * Represents a single class or trait option that players can choose
- * before joining the game.  Each option has an identifier, a
- * human‑friendly name and an emoji used as a simple icon.  The
- * number and names of the options can be easily extended or
- * customised without modifying the component logic.
- */
-export interface ClassOption {
-  id: string;
-  name: string;
-  icon: string;
-}
-
-/**
- * Props for the ClassPicker.  The current selected value and the
- * callback for when a new value is chosen are required.  Passing
- * `null` as the value indicates that no option is selected.
- */
 export interface ClassPickerProps {
   value: string | null;
   onChange: (newValue: string) => void;
@@ -28,34 +13,33 @@ export interface ClassPickerProps {
    * The available class options.  Defaults to a small set of
    * archetypal fantasy classes if not provided.
    */
-  options?: ClassOption[];
+  options?: GameClass[];
 }
-
-const defaultOptions: ClassOption[] = [
-  { id: 'warrior', name: 'Warrior', icon: '🛡️' },
-  { id: 'mage', name: 'Mage', icon: '🧙' },
-  { id: 'rogue', name: 'Rogue', icon: '🗡️' },
-  { id: 'healer', name: 'Healer', icon: '💊' },
-];
 
 /**
  * A grid of selectable cards allowing the player to choose their
  * character class/trait.  Selected cards are highlighted.  On
  * desktop the grid automatically expands to fill available width.
  */
-const ClassPicker: React.FC<ClassPickerProps> = ({ value, onChange, options = defaultOptions }) => {
+const ClassPicker: React.FC<ClassPickerProps> = ({
+  value,
+  onChange,
+  options = GameClasses,
+}) => {
   return (
     <div className={styles.grid}>
-      {options.map((opt) => {
-        const selected = value === opt.id;
+      {options.map((opt: GameClass) => {
+        const selected = value === opt.name;
         return (
           <div
-            key={opt.id}
+            key={opt.name}
             className={`${styles.card} ${selected ? styles.selected : ''}`}
-            onClick={() => onChange(opt.id)}
+            onClick={() => onChange(opt.name)}
+            style={{ cursor: 'pointer' }}
           >
-            <div className={styles.icon}>{opt.icon}</div>
-            <div className={styles.label}>{opt.name}</div>
+            <img className={styles.image} src={opt.imageSrc} alt={opt.name} />
+            <Label className={styles.label}>{opt.name}</Label>
+            <Label className={styles.label}>{opt.description}</Label>
           </div>
         );
       })}
