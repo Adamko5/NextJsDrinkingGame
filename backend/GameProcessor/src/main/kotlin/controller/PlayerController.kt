@@ -16,7 +16,7 @@ class PlayerController(private val playerService: PlayerService) {
 
     @PostMapping
     fun addPlayer(@RequestBody req: AddPlayerRequest): ResponseEntity<Player> {
-        val player = playerService.addPlayer(req.name, req.gameClassName)
+        val player = playerService.addPlayer(req.name, req.gameClassName, req.color)
         return ResponseEntity.status(HttpStatus.CREATED).body(player)
     }
 
