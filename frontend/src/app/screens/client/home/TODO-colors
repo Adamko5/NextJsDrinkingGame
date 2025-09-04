@@ -4,6 +4,13 @@ Note:
 This should be implemented in the same way and styles as ./components/ClassPicker.tsx
 Instead of "options = GameClasses", use the colors defined in /src/constants/player-colors.ts
 
+What it should look like:
+    Arrows on the left and right (same as ClassPicker) to toggle the previous/next color option.
+    Between the arrows:
+        1. A circle with the color as the background
+        2. The color's name (defined in player-colors.ts) in the text color of the color, under the circle
+        - I assume you will need the column display style.
+
 Implementation steps:
 1. Implement the ./components/ColorPicker.tsx and ./components/ColorPicker.module.css files
 2. Use the new color picker in ./Home.tsx.
