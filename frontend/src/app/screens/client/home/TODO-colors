@@ -1,7 +1,8 @@
 Add the color picker for the player. This will require adding a component and using it.
 
 Note:
-This should be implemented in the same way and styles as ./components/ClassPicker.tsx
+This should be implemented in the same way, styles and in the same directory as src/app/screens/client/home/components/ClassPicker.tsx.
+I created empty ColorPicker.tsx and ColorPicker.module.css files in the directory.
 Instead of "options = GameClasses", use the colors defined in /src/constants/player-colors.ts
 
 What it should look like:
@@ -12,6 +13,6 @@ What it should look like:
         - I assume you will need the column display style.
 
 Implementation steps:
-1. Implement the ./components/ColorPicker.tsx and ./components/ColorPicker.module.css files
+1. Implement the ColorPicker.tsx and ColorPicker.module.css files
 2. Use the new color picker in ./Home.tsx.
     Make sure to save the selected color and send it to the addPlayer request
