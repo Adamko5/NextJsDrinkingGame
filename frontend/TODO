@@ -7,5 +7,9 @@ Here are their locations:
 4. ./src/app/screens/client/home/TODO-colors
 5. ./src/app/screens/client/home/TODO-join
 
+
+
 Refactoring & improvements:
+- These are the backlog. This should be looked at only after the entire project is done.
+
 1. /backend/GameProcessor/src/main/resources/TODO
