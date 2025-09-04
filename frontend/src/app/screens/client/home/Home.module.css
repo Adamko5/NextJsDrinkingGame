@@ -46,3 +46,29 @@
   display: flex;
   justify-content: center;
 }
+
+/* Error text displayed beneath form fields. Uses the danger colour from the theme. */
+.error {
+  color: var(--danger);
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* Container for the success state when a player has joined. */
+.joinedContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+/* Green “Joined!” message shown after successfully joining. */
+.joinedMessage {
+  color: var(--success);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}

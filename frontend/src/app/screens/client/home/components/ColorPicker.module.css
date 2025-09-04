@@ -1,0 +1,79 @@
+/*
+  Styles for the ColorPicker component. Based on ClassPicker.module.css.
+  The picker presents a collection of selectable colour cards. The
+  currently selected card is highlighted with a coloured border and
+  subtle shadow. Colours come from the PlayerColors constant and are
+  applied via inline styles on the swatch element.
+*/
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease;
+  user-select: none;
+}
+
+.card:hover {
+  background-color: var(--blue-100);
+}
+
+/* Selected card highlight */
+.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--focus-ring);
+}
+
+/* Label styling for colour names */
+.label {
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--text);
+}
+
+/* Colour swatch shown above the label */
+.swatch {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+/* Wrapper to align arrows and card horizontally */
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Basic styling for the navigation arrows */
+.arrow {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}

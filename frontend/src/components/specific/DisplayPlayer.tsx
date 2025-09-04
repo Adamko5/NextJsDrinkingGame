@@ -4,6 +4,7 @@ import React from 'react';
 import type { Player } from '@/client/models';
 import Label from '@/components/general/Label';
 import styles from './DisplayPlayer.module.css';
+import { getClassByName } from '@/constants/classes';
 
 export interface DisplayPlayerProps {
   /**
@@ -38,13 +39,11 @@ const DisplayPlayer: React.FC<DisplayPlayerProps> = ({ player }) => {
       } as React.CSSProperties}
     >
       <div className={styles.avatar}>
-        {player.gameClass?.imageSrc && (
-          <img
-            src={player.gameClass.imageSrc}
-            alt={player.name}
-            className={styles.image}
-          />
-        )}
+        <img
+          src={getClassByName(player.gameClass.name)?.imageSrc}
+          alt={player.name}
+          className={styles.image}
+        />
       </div>
       <Label className={styles.name}>{player.name}</Label>
     </div>
