@@ -22,4 +22,5 @@ Just add some state(s) that will differentiate:
     2. Joined successfully
     3. Some default state that means nothing has happened and player is working on the join form
 
-The implementation is simple, so i will not provide steps. Do what you will.
+The implementation is simple, so i will not provide steps.
+Implement everything i explained above, however you see fit.
