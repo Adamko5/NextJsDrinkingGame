@@ -1,12 +1,5 @@
 Implement all TODOs in the project.
 
-Here are their locations:
-1. DONE - ./src/constants/TODO
-2. DONE - ./src/components/TODO
-3. DONE - ./src/app/router/TODO
-4. DONE - ./src/app/screens/client/home/TODO-colors
-5. DONE - ./src/app/screens/client/home/TODO-join
-
 
 
 Refactoring & improvements:
