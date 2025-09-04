@@ -3,7 +3,7 @@ Implement all TODOs in the project.
 Here are their locations:
 1. ./src/constants/TODO
 2. ./src/components/TODO
-3. ./src/app/router/screen_containers/TODO
+3. ./src/app/router/TODO
 4. ./src/app/screens/client/home/TODO-colors
 5. ./src/app/screens/client/home/TODO-join
 
