@@ -4,6 +4,7 @@ import com.example.model.GameClass
 import com.example.model.Player
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.awt.Color
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
@@ -12,14 +13,21 @@ class PlayerService {
     private val log = LoggerFactory.getLogger(PlayerService::class.java)
     private val players = ConcurrentHashMap<String, Player>()
 
-    fun addPlayer(name: String, gameClassName: String): Player {
+    fun addPlayer(name: String, gameClassName: String, color: String): Player {
         if (players.containsKey(name)) {
-            throw IllegalArgumentException("Player with name $name already exists")
+            return Player("", GameClass(""), false, "", "dummy");
         }
+
+        for (player in players.values) {
+            if (player.color == color) {
+                return Player("dummy", GameClass(""), false, "", "")
+            }
+        }
+
 
         val gameClass = GameClass(gameClassName)
         val playerKey = UUID.randomUUID().toString().replace("-", "").substring(0, 8)
-        val player = Player(name = name, gameClass = gameClass, playerKey = playerKey)
+        val player = Player(name = name, gameClass = gameClass, playerKey = playerKey, color = color)
         players[name] = player
         log.info("Added player with name {} and gameClass {}", name, gameClass)
         return player

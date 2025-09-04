@@ -1,25 +1,11 @@
-1. After the player presses join (in screen [src/app/screens/client/home/Home.tsx]), I need to store his name in the cookie.
-  Make a new util file in [src/util] that will store a name in the cookie and get the name from the cookie
+Implement all TODOs in the project.
 
-2. Rework the backend model and methods to add a player's color
-  - Be careful here, because if a color is already taken by a player, no new player can be created with such color
+Here are their locations:
+1. ./src/constants/TODO
+2. ./src/components/TODO
+3. ./src/app/router/screen_containers/TODO
+4. ./src/app/screens/client/home/TODO-colors
+5. ./src/app/screens/client/home/TODO-join
 
-3. Rework the frontend model and methods to add a player's color
-
-4. Rework the [src/components/general/Label.tsx] so that it takes a text color as a parameter
-
-5. Rework the [src/app/screens/server/home/components/Roster.tsx] to extract the component that
-  displays the player's class image and and his name.
-  This todo item has the following steps:
-    - Use the file [src/components/specific/DisplayPlayer.tsx] for the new component
-    - Create a .css file for the new component (copy the existing .css)
-    - Use the new component in the [src/app/screens/server/home/components/Roster.tsx]
-  Make sure this component displays the player's color in the background of the class's image and in the text color.
-
-6. Define a file [src/constants/colors.ts]. Add an array of 10 colors. Try to make them easily distinguishable.
-
-7. Add a new file [src/app/screens/client/home/components/ColorPicker.tsx] that will work the same as [src/app/screens/client/home/components/ClassPicker.tsx], but the player will pick a color instead of a class.
-  - Also create a .css file for this component, styled like the other .css files.
-
-8. Optimize .css files in [src/app/screens/client] for a phone screen.
-
+Refactoring & improvements:
+1. /backend/GameProcessor/src/main/resources/TODO

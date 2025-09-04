@@ -1,0 +1,21 @@
+Assignment summary:
+Implement a component that will display the Player.
+Every player has a class, a color and a name.
+I want this component to display the class's image and the player name
+
+Design notes:
+1. Play around with the design. Feel free to add some gradients and other cool functions...
+2. Use the styles in /src/styles. You can use the general components in /src/components/general.
+
+What it should look like:
+It should look like the players displayed in /src/app/screens/server/home/components/Roster.tsx
+This means copy the img and the Label, with their styles.
+Additions to this design:
+    1. Make the text color in the player's color
+    2. Make the background color of the image the players color instead of blue (currently in roster)
+
+Implementation steps:
+    1. Implement the component based on the specification of what it should look like.
+        - it should take the Player object as input, defined in /src/client/models.ts
+        - use files ./specific/DisplayPlayer.tsx and ./specific/DisplayPlayer.module.css
+    2. Use the new DisplayPlayer component in /src/app/screens/server/home/components/Roster.tsx to display the players

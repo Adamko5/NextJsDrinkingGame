@@ -1,0 +1,25 @@
+Add the flow for after the player presses join.
+
+This means there should be:
+1. Green "Joined!" text.
+2. The displayed player under the text.
+    For this, use the component in src/components/specific/DisplayPlayer.tsx
+3. Error handling for when the player already exists.
+    If the player already exists, the backend will return a Player object with an empty name.
+    In this case, the frontend should display a message (maybe even an alert, but ideally a red text under the input),
+        which will say that the player name already exists.
+        The message should say: "Player (player name) already exists!"
+4. Error handling for when the color is already used.
+    If the color is already used, the backend will return a Player object with an empty color.
+    In this case, the frontend should display a message (maybe even an alert, but ideally a red text under the color picker),
+        which will say that the player color is already used.
+        The message should say: "Color is already used!"
+
+Note:
+You dont have a to make a new component for this.
+Just add some state(s) that will differentiate:
+    1. Errors (name and color, based on returned object from the backend)
+    2. Joined successfully
+    3. Some default state that means nothing has happened and player is working on the join form
+
+The implementation is simple, so i will not provide steps. Do what you will.

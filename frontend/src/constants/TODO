@@ -1,0 +1,3 @@
+Make an 'export const' for player colors in the file ./player-colors.ts.
+This should be similar to the const of classes in ./classes.ts.
+I need a list of 10 distinct colors. Every color will represent 1 player, so make them really distinct.

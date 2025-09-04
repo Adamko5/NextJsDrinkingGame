@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.awt.Color
 
 @RestController
 @RequestMapping("/api/players")
@@ -32,5 +33,5 @@ class PlayerController(private val playerService: PlayerService) {
                else ResponseEntity.notFound().build()
     }
 
-    data class AddPlayerRequest(val name: String, val gameClassName: String)
+    data class AddPlayerRequest(val name: String, val gameClassName: String, val color: String)
 }

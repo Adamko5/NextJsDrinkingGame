@@ -25,6 +25,7 @@ export interface Player {
   gameClass: GameClass;
   connected: boolean;  // defaults true server-side
   playerKey: string;
+  color: string;
 }
 
 export interface Vote {

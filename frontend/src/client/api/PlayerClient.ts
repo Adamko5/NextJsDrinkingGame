@@ -6,6 +6,7 @@ import type { Player } from '../models';
 export interface AddPlayerRequest {
   name: string;
   gameClassName: string;
+  color: string;
 }
 
 export default class PlayerClient {
@@ -26,7 +27,7 @@ export default class PlayerClient {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name: req.name, gameClassName: req.gameClassName }),
+      body: JSON.stringify({ name: req.name, gameClassName: req.gameClassName , color: req.color }),
     });
     if (!response.ok) {
       throw new Error(`Failed to add player: ${response.status} ${response.statusText}`);
