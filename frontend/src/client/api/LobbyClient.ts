@@ -12,26 +12,10 @@ export default class LobbyClient {
   }
 
   /**
-   * Create a new lobby on the backend. Returns the created lobby object.
-   */
-  async createLobby(): Promise<Lobby> {
-    const response = await fetch(`${this.baseUrl}/api/lobby`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to create lobby: ${response.status} ${response.statusText}`);
-    }
-    const data = await response.json();
-    return data as Lobby;
-  }
-
-  /**
    * Retrieve the currently active lobby. Returns `null` if no lobby exists.
    */
   async getLobby(): Promise<Lobby | null> {
+    console.log("Fetching lobby from", this.baseUrl);
     const response = await fetch(`${this.baseUrl}/api/lobby`, {
       method: 'GET',
       headers: {

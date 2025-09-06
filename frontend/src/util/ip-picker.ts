@@ -11,5 +11,5 @@ export function pickLanIp(): string {
       }
     }
   }
-  return '192.168.1.167';
+  return '192.168.137.1';
 }

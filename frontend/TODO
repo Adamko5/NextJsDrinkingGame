@@ -1,12 +1,17 @@
 Implement all TODOs in the project.
 
-1. Implement the cookie and playerKey
+1. Make a new generic screen, something that will introduce the story.
 2. Transition to the next state - add a button to start the game in the server's home
-3. Improve the server's home screen design, its too large in height and forces my small notebook's
-    monitor to add a scrollbar on the right.
+    This should direct to the story introduction screen.
+3. Make a new screen where the players vote for a leader.
 
+
+Note and implementation rules:
+1. When making a component or a screen, always use:
+    The general components defined in src/components/general.
+    The styles defined in src/styles. For example, in .css files, use var(--bg)
 
 Refactoring & improvements:
-- These are the backlog. This should be looked at only after the entire project is done.
+- These are the backlog. This should be completely ignored for the time being.
 
 1. /backend/GameProcessor/src/main/resources/TODO

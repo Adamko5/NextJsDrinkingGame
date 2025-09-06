@@ -94,7 +94,7 @@ const ClassPicker: React.FC<ClassPickerProps> = ({
         style={{ cursor: 'pointer' }}
       >
         <img className={styles.image} src={current.imageSrc} alt={current.name} />
-        <Label className={styles.label}>{current.name}</Label>
+        <Label className={styles.labelClass}>{current.name}</Label>
         <Label className={styles.label}>{current.description}</Label>
       </div>
       <button

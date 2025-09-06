@@ -10,17 +10,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
-  padding: 2rem 1rem;
-  background-color: var(--bg);
+  padding: 1rem;
   color: var(--text);
   gap: 2rem;
 }
 
 .section {
-  width: 100%;
-  max-width: 40rem;
+  width: 93%;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
@@ -33,4 +29,11 @@
   font-weight: 600;
   margin-bottom: 1rem;
   text-align: center;
+}
+
+.buttonContainer {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

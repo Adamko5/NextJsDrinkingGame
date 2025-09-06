@@ -8,17 +8,8 @@ import org.springframework.stereotype.Service
 @Service
 class LobbyService {
     private val log = LoggerFactory.getLogger(LobbyService::class.java)
-    private var currentLobby: Lobby? = null
 
-    fun createLobby(): Lobby {
-        if (currentLobby == null) {
-            currentLobby = Lobby()
-            log.info("Created lobby.")
-        } else {
-            throw IllegalStateException("Lobby already exists")
-        }
-        return currentLobby!!
-    }
+    private var currentLobby: Lobby = Lobby()
     
     fun getLobby(): Lobby? = currentLobby
 
@@ -31,8 +22,10 @@ class LobbyService {
         val lobby = getLobby() ?: throw IllegalStateException("Lobby does not exist")
         if (lobby.status == LobbyStatus.LOBBY) {
             lobby.status = LobbyStatus.PLAYING
+            advancePhase()
             log.info("Lobby started playing")
         } else {
+            log.info("Error when starting lobby")
             throw IllegalStateException("Lobby is already in progress")
         }
     }

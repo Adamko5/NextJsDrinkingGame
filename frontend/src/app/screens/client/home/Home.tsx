@@ -116,7 +116,7 @@ export default function ClientHome() {
         </div>
       ) : (
         <form className={styles.card} onSubmit={handleJoin}>
-          <h1 className={styles.title}>Join the Game</h1>
+          <Label className={styles.title}>Join the Game</Label>
           <div className={styles.field}>
             <Label htmlFor="playerName" required>
               Name

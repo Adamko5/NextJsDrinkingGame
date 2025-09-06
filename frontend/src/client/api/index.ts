@@ -9,7 +9,9 @@ import PlayerClient from './PlayerClient';
 import SnapshotClient from './SnapshotClient';
 import VoteClient from './VoteClient';
 
-const baseUrl = "http://" + pickLanIp() + ":8080";
+
+export const HOST = pickLanIp();
+const baseUrl = "http://" + HOST + ":8080";
 
 export const lobbyClient = new LobbyClient(baseUrl);
 export const playerClient = new PlayerClient(baseUrl);

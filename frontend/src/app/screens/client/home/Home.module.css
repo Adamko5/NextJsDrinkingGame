@@ -13,27 +13,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  padding: 1rem;
-  background-color: var(--bg);
   color: var(--text);
 }
 
 .card {
   width: 100%;
   max-width: 28rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  padding: 2rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .title {
   margin-bottom: 1.5rem;
+  width: 100%;
   font-size: 1.5rem;
   font-weight: 600;
-  text-align: center;
 }
 
 .field {

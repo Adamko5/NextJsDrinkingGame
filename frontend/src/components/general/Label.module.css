@@ -1,11 +1,12 @@
 /*
-  Styles for the Label component.  Labels are inline‑flex to
-  vertically align properly with their contents.  A required
+  Styles for the Label component. Labels are inline‑flex to
+  vertically align properly with their contents. A required
   indicator is coloured using the danger palette.
 */
 
-.label {
+.div {
   display: inline-flex;
+  justify-content: center;
   align-items: center;
   font-size: 0.875rem;
   font-weight: 500;

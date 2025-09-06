@@ -11,14 +11,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/lobby")
 class LobbyController(private val lobbyService: LobbyService) {
 
-    private val log = LoggerFactory.getLogger(LobbyController::class.java)
-    
-    @PostMapping
-    fun createLobby(): ResponseEntity<Lobby> {
-        val lobby = lobbyService.createLobby()
-        return ResponseEntity.status(HttpStatus.CREATED).body(lobby)
-    }
-
     @GetMapping
     fun getLobby(): ResponseEntity<Lobby> {
         val lobby = lobbyService.getLobby()

@@ -7,7 +7,7 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   padding: 2rem;
   /* Light neutral backdrop with a subtle dotted pattern */
   background-color: var(--neutral-50);
@@ -16,8 +16,6 @@
 }
 
 .card {
-  width: 100%;
-  max-width: 800px;
   padding: 1.5rem;
   border: 1px solid var(--blue-300);
   border-radius: 0.5rem;

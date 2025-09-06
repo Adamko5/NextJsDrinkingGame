@@ -58,7 +58,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
 }
 
 /* Basic styling for the navigation arrows */
@@ -69,8 +68,8 @@
   line-height: 1;
   color: var(--primary);
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
   transition: color 0.2s ease;
+  padding: 0;
 }
 
 .arrow:disabled {

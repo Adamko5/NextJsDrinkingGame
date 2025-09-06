@@ -17,12 +17,12 @@ export interface LabelProps {
  * typography.  It supports an optional required indicator to
  * accompany form inputs.
  */
-const Label: React.FC<LabelProps> = ({ htmlFor, children, required = false, className }) => {
+const Label: React.FC<LabelProps> = ({ children, required = false, className }) => {
   return (
-    <label htmlFor={htmlFor} className={`${styles.label} ${className ?? ''}`.trim()}>
+    <div className={`${styles.div} ${className ?? ''}`.trim()}>
       {children}
       {required && <span className={styles.required}>*</span>}
-    </label>
+    </div>
   );
 };
 
