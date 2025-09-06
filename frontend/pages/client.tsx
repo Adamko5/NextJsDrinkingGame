@@ -6,6 +6,7 @@
 import React from 'react';
 import Router from '../src/app/router';
 import { SnapshotProvider } from '../src/app/state/SnapshotContext';
+import { CookieProvider } from '@/app/state/CookieManager';
 
 /**
  * ClientPage renders the game for the player/client role.  Like the
@@ -16,7 +17,9 @@ import { SnapshotProvider } from '../src/app/state/SnapshotContext';
 export default function ClientPage() {
   return (
     <SnapshotProvider>
-      <Router role="client" />
+      <CookieProvider>
+        <Router role="client" />
+      </CookieProvider>
     </SnapshotProvider>
   );
 }

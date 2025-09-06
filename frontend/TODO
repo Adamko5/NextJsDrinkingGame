@@ -1,5 +1,9 @@
 Implement all TODOs in the project.
 
+1. Implement the cookie and playerKey
+2. Transition to the next state - add a button to start the game in the server's home
+3. Improve the server's home screen design, its too large in height and forces my small notebook's
+    monitor to add a scrollbar on the right.
 
 
 Refactoring & improvements:

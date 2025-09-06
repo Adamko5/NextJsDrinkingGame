@@ -22,9 +22,21 @@ export interface RouterProps {
 export default function Router({ role, fallback }: RouterProps) {
   const { snapshot, error }: SnapshotContextValue = useSnapshot();
 
+  // Define a centered style using flexbox.
+  const centeredStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh"
+  };
+
   // Show fallback only if snapshot is not yet loaded.
   if (!snapshot) {
-    return <>{fallback ?? <div>Loading…</div>}</>;
+    return (
+      <>
+        {fallback ?? <div style={centeredStyle}>Loading…</div>}
+      </>
+    );
   }
 
   // Surface snapshot errors.
@@ -52,7 +64,7 @@ export default function Router({ role, fallback }: RouterProps) {
   }
 
   return (
-    <Suspense fallback={fallback ?? <div>Loading screen…</div>}>
+    <Suspense fallback={fallback ?? <div style={centeredStyle}>Loading screen…</div>}>
       {role === 'client' ? (
         <ClientContainer ScreenComponent={ScreenComponent} />
       ) : (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Input from '../../../../components/general/Input';
 import Label from '../../../../components/general/Label';
 import Button from '../../../../components/general/Button';
@@ -12,6 +12,8 @@ import { playerClient } from '../../../../client/api/index';
 import { GameClasses } from '@/constants/classes';
 import { PlayerColors } from '@/constants/player-colors';
 import type { Player } from '@/client/models';
+import { useCookie } from '../../../state/CookieManager';
+import { getPlayerByKey } from '@/util/util';
 
 /**
  * The Home screen presented to players on their phones.  It allows
@@ -31,6 +33,28 @@ export default function ClientHome() {
   // Error messages for duplicate name and colour conditions.
   const [nameError, setNameError] = useState<string | null>(null);
   const [colorError, setColorError] = useState<string | null>(null);
+
+  // Retrieve cookie functionality.
+  const { currentPlayerKey, setCurrentPlayerKey } = useCookie();
+
+  // On component mount, check if a player exists in the cookie and retrieve it.
+  useEffect(() => {
+    async function fetchPlayerFromCookie() {
+      if (currentPlayerKey && !joinedPlayer) {
+        try {
+          // Assuming a backend API to fetch all players.
+          const players: Player[] = await playerClient.getPlayers();
+          const playerFound = getPlayerByKey(currentPlayerKey, players);
+          if (playerFound) {
+            setJoinedPlayer(playerFound);
+          }
+        } catch (err) {
+          console.error('Error fetching players on load:', err);
+        }
+      }
+    }
+    fetchPlayerFromCookie();
+  }, [currentPlayerKey, joinedPlayer]);
 
   /**
    * Handles submission of the join form.  Sends the player's name, class and
@@ -69,6 +93,10 @@ export default function ClientHome() {
       }
       // No errors – save the returned player to trigger the joined view.
       setJoinedPlayer(player);
+      // Store the returned player's key in the cookie.
+      if (player.playerKey) {
+        setCurrentPlayerKey(player.playerKey);
+      }
     } catch (err: any) {
       // Log unexpected errors and surface a basic alert.
       console.error(err);
