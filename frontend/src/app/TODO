@@ -1,0 +1,31 @@
+The purpose of this todo is to make a new general screen for the server in
+    ./screens/server/general/story_telling_1. Use the StoryTelling files (.tsx and .module.css)
+This screen will be used to say the story.
+The screen should use a list of some objects in order.
+
+The objects in order:
+ - Name the object StoryLine.
+ - This will represent 1 instance of text on the screen.
+ - The object should have these properties:
+    1. text - the text displayed on the screen
+    2. screenTime - the time of how long this should be displayed on the screen
+
+The screen:
+ - Will pop StoryLines from the list and display the text for (screenTime) long,
+    then it will automatically display the next StoryLine.
+ - Make a component for the window that displays the text.
+    Use story_telling_1/components/DisplayStoryLine files for it.
+    This look of this should resemble a white cloud with the text inside.
+    The theme of my app is blue and the background is blue, so it fits nicely.
+    I need you to play with the DisplayStoryLine component's layout and design.
+    Try to make the border of the component look cloud-shaped somehow.
+ - Once the list is empty, fade in a /src/components/general/Button that says "Start Voting".
+    This button will transition to the next state of the game.
+    Use 'await lobbyClient.advancePhase()' from src/client/api/index.ts.
+
+Implementation steps:
+1. Make the StoryLine object. Make it inside ./screens/server/general/models/StoryLineModels.ts
+2. Make the DisplayStoryLine component.
+3. Make the dummy StoryLines definition in ./screens/server/general/story_telling_1/story.ts
+4. Make the StoryTelling screen.
+5. Use the StoryTelling screen in /src/app/router/phaseMap.tsx

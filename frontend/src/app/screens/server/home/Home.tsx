@@ -20,8 +20,6 @@ export default function ServerHomePage() {
 
   const handleStartGame = async () => {
     try {
-      const lobby = await lobbyClient.getLobby();
-      console.log("Lobby started:", lobby);
       const result = await lobbyClient.startLobby();
       console.log("Lobby started:", result);
       // Optionally, navigate to the next screen here.

@@ -33,11 +33,11 @@ export const phaseMap: Record<number, PhaseScreens> = {
     server: ServerHome,
   },
   2: {
-    client: ClientVoting1,
-    server: ServerVoting1,
+    client: ClientBlankScreen,
+    server: TODO story screen,
   },
   3: {
-    client: ClientBlankScreen,
-    server: ServerBlankScreen,
+    client: ClientVoting1,
+    server: ServerVoting1,
   },
 };

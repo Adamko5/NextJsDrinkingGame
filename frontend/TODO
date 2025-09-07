@@ -1,15 +1,13 @@
-Implement all TODOs in the project.
-
-1. Make a new generic screen, something that will introduce the story.
-2. Transition to the next state - add a button to start the game in the server's home
-    This should direct to the story introduction screen.
-3. Make a new screen where the players vote for a leader.
+TODO list:
+1. Implement the todo in src/app/TODO
+2. Make a new screen where the players vote for a leader.
 
 
 Note and implementation rules:
 1. When making a component or a screen, always use:
     The general components defined in src/components/general.
-    The styles defined in src/styles. For example, in .css files, use var(--bg)
+    The styles defined in src/styles. For example, in .css files, use variables like so: var(--xxx).
+
 
 Refactoring & improvements:
 - These are the backlog. This should be completely ignored for the time being.
