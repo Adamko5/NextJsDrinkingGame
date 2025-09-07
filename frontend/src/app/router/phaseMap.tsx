@@ -12,6 +12,7 @@ import ServerHome from '../screens/server/home/Home';
 import ServerVoting1 from '../screens/server/voting1/Voting1';
 import ClientBlankScreen from '../screens/client/blank/BlankScreen';
 import ServerBlankScreen from '../screens/server/blank/BlankScreen';
+import ServerStoryTelling from '../screens/server/general/story_telling_1/StoryTelling';
 
 export type Role = 'client' | 'server';
 
@@ -34,7 +35,7 @@ export const phaseMap: Record<number, PhaseScreens> = {
   },
   2: {
     client: ClientBlankScreen,
-    server: TODO story screen,
+    server: ServerStoryTelling,
   },
   3: {
     client: ClientVoting1,

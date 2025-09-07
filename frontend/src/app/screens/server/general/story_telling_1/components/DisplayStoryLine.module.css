@@ -1,0 +1,60 @@
+/* Procedural fluffy cloud with unified fade-in
+   ------------------------------------------- */
+
+.cloud {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.4rem 3rem;
+  min-width: 320px;
+  max-width: min(72vw, 820px, 70%);
+  text-align: center;
+
+  /* One shadow for the whole thing (not per puff) */
+  filter:
+    drop-shadow(0 10px 24px rgba(0,0,0,0.14))
+    drop-shadow(0 3px 8px rgba(0,0,0,0.08));
+}
+
+/* The body "mask" that hides puff seams so it looks like one cloud */
+.cloud::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  border-radius: 3.2rem;
+  z-index: 1; /* above puffs, below text */
+}
+
+/* Content layer (text) */
+.body {
+  position: relative;
+  z-index: 2;
+}
+
+/* Label text inside */
+.text {
+  font-size: 1.25rem;
+  line-height: 1.35;
+  color: var(--neutral-900, #1f2937);
+}
+
+/* Generic puff — all geometry comes from inline styles */
+.puff {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  z-index: 0;        /* behind ::after */
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 250ms ease-out;
+}
+
+/* Unified fade-in for both cloud + label */
+.fadeIn { animation: bubbleFade 700ms ease-out both; }
+
+@keyframes bubbleFade {
+  from { opacity: 0; transform: scale(0.985); filter: blur(2px); }
+  to   { opacity: 1; transform: scale(1);     filter: blur(0); }
+}
