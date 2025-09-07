@@ -3,7 +3,7 @@ TODO list:
 2. Make a new screen where the players vote for a leader.
 
 
-Note and implementation rules:
+Notes and implementation rules:
 1. When making a component or a screen, always use:
     The general components defined in src/components/general.
     The styles defined in src/styles. For example, in .css files, use variables like so: var(--xxx).
