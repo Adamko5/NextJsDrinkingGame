@@ -16,7 +16,12 @@ class VoteController(private val voteService: VoteService) {
 
     @PostMapping
     fun addVote(@RequestBody req: AddVoteRequest): ResponseEntity<Vote> {
-        val vote = voteService.addVote(req.byPlayer, req.binary, req.forPlayer)
+        val vote = voteService.addVote(
+            req.byPlayer,
+            req.binary,
+            req.forPlayer,
+            req.forOption
+        )
         return ResponseEntity.status(HttpStatus.CREATED).body(vote)
     }
 
@@ -34,5 +39,8 @@ class VoteController(private val voteService: VoteService) {
 
     data class AddVoteRequest(val byPlayer: String,
                               val binary: Boolean?,
-                              val forPlayer: String?)
+                              val forPlayer: String?,
+                              val forOption: String?
+    )
+
 }

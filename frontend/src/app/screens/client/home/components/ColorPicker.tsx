@@ -90,13 +90,18 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
       <div
         className={`${styles.card} ${value === current.name ? styles.selected : ''}`}
         onClick={handleSelect}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'pointer', borderColor: `#${current.code}` }}
       >
         <div
           className={styles.swatch}
           style={{ backgroundColor: `#${current.code}` }}
         />
-        <Label className={styles.label}>{current.name}</Label>
+        <Label
+          className={styles.label}
+          style={{ color: `#${current.code}`, fontWeight: 'bold' }}
+        >
+          {current.name}
+        </Label>
       </div>
       <button
         type="button"

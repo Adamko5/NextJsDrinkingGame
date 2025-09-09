@@ -3,9 +3,30 @@
 // strongly typed contract makes it easy to reason about the shape of
 // responses and ensures the API clients return consistent data.
 
+export interface DifficultyColor {
+  name: string;
+  color: string;
+}
+
+export const difficultyColors: DifficultyColor[] = [
+  { name: 'Easy', color: '#10b610ff' },
+  { name: 'Medium', color: '#e1ff00ff' },
+  { name: 'Hard', color: '#ff9900ff'},
+  { name: 'Impossible', color: '#ff1100ff'}
+];
+
+export function getDifficultyByName(name: string): DifficultyColor {
+  const difficulty = difficultyColors.find((c) => c.name === name);
+  if (!difficulty) {
+    return { name: 'Unknown', color: '#000000ff' };
+  }
+  return difficulty;
+}
+
 export interface GameClass {
   name: string;
   description: string;
+  difficulty: DifficultyColor;
   imageSrc: string;
 }
 
@@ -29,13 +50,14 @@ export interface Player {
 }
 
 export interface Vote {
-  binary: boolean | null;
-  forPlayer: Player | null;
+  binary?: boolean;
+  forPlayer?: Player;
+  forOption?: string
 }
 
 export interface Snapshot {
   players: Player[];
-  lobby: Lobby | null;
+  lobby: Lobby;
   // Kotlin uses ConcurrentHashMap ; model this as a Record/Map
   votes: Record<string, Vote>;
 }

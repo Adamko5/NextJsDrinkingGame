@@ -2,9 +2,9 @@
 
 import React, { Suspense } from 'react';
 import { SnapshotContextValue, useSnapshot } from '../state/SnapshotContext';
-import { phaseMap, Role } from './phaseMap';
-import ClientContainer from './screen_containers/client';
-import ServerContainer from './screen_containers/server';
+import { phaseMap, PhaseScreens, Role } from './phaseMap';
+import ClientContainer from './screen_containers/client/client';
+import ServerContainer from './screen_containers/server/server';
 
 export interface RouterProps {
   role: Role;
@@ -24,19 +24,15 @@ export default function Router({ role, fallback }: RouterProps) {
 
   // Define a centered style using flexbox.
   const centeredStyle = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh"
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh'
   };
 
   // Show fallback only if snapshot is not yet loaded.
   if (!snapshot) {
-    return (
-      <>
-        {fallback ?? <div style={centeredStyle}>Loading…</div>}
-      </>
-    );
+    return <>{fallback ?? <div style={centeredStyle}>Loading…</div>}</>;
   }
 
   // Surface snapshot errors.
@@ -46,15 +42,13 @@ export default function Router({ role, fallback }: RouterProps) {
 
   // Determine which set of screens applies to the current phase.
   const phaseNumber = snapshot.lobby?.phase ?? 1;
-  const screensForPhase = (phaseMap as Record<number, any>)[phaseNumber];
+  const screensForPhase: PhaseScreens = (phaseMap as Record<number, any>)[phaseNumber];
   if (!screensForPhase) {
     return <div>Unknown phase: {phaseNumber}</div>;
   }
 
   // Look up the screen for the current role.
-  const ScreenComponent = screensForPhase[role] as
-    | React.ComponentType<any>
-    | undefined;
+  const ScreenComponent = screensForPhase[role] as React.ComponentType<any> | undefined;
   if (!ScreenComponent) {
     return (
       <div>
@@ -66,9 +60,15 @@ export default function Router({ role, fallback }: RouterProps) {
   return (
     <Suspense fallback={fallback ?? <div style={centeredStyle}>Loading screen…</div>}>
       {role === 'client' ? (
-        <ClientContainer ScreenComponent={ScreenComponent} />
+        <ClientContainer ScreenComponent={ScreenComponent}
+          backgroundImage={screensForPhase.backgroundImage}
+          backgroundVideo={screensForPhase.backgroundVideo}
+        />
       ) : (
-        <ServerContainer ScreenComponent={ScreenComponent} />
+        <ServerContainer ScreenComponent={ScreenComponent}
+          backgroundImage={screensForPhase.backgroundImage}
+          backgroundVideo={screensForPhase.backgroundVideo}
+        />
       )}
     </Suspense>
   );

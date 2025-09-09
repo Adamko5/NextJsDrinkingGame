@@ -7,18 +7,21 @@ import React from 'react';
 // components may also be used so long as they do not reference
 // browser‑only APIs.
 import ClientHome from '../screens/client/home/Home';
-import ClientVoting1 from '../screens/client/voting1/Voting1';
 import ServerHome from '../screens/server/home/Home';
-import ServerVoting1 from '../screens/server/voting1/Voting1';
+import ServerVoting1 from '../screens/server/general/voting_1/Voting1';
 import ClientBlankScreen from '../screens/client/blank/BlankScreen';
 import ServerBlankScreen from '../screens/server/blank/BlankScreen';
-import ServerStoryTelling from '../screens/server/general/story_telling_1/StoryTelling';
+import StoryTellingIntro from '../screens/server/story/intro/Intro';
+import VotingPathIntro from '../screens/server/voting/intro/Intro';
+import ClientVotingPathIntro from '../screens/client/voting/Intro';
 
 export type Role = 'client' | 'server';
 
 export type PhaseScreens = {
   client: React.ComponentType<any>;
   server: React.ComponentType<any>;
+  backgroundImage?: string;
+  backgroundVideo?: string;
 };
 
 /**
@@ -35,10 +38,12 @@ export const phaseMap: Record<number, PhaseScreens> = {
   },
   2: {
     client: ClientBlankScreen,
-    server: ServerStoryTelling,
+    server: StoryTellingIntro,
+    backgroundImage: 'backgrounds/creepy_forest_intro.png',
   },
   3: {
-    client: ClientVoting1,
-    server: ServerVoting1,
+    client: ClientVotingPathIntro,
+    server: VotingPathIntro,
+    backgroundImage: 'backgrounds/forest_splitting_path.png',
   },
 };

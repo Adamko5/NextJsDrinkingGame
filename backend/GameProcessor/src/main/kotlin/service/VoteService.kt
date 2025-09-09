@@ -1,5 +1,7 @@
 package com.example.service
 
+import com.example.model.GameClass
+import com.example.model.Player
 import com.example.model.Vote
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -13,10 +15,16 @@ class VoteService (private val playerService: PlayerService){
 
     fun addVote(byPlayer: String,
                 binary: Boolean?,
-                forPlayer: String?): Vote {
+                forPlayer: String?,
+                forOption: String?): Vote {
         log.info("Adding vote by player {} for binary {} for player {}", byPlayer, binary, forPlayer)
-        val forPlayer = playerService.getPlayer(forPlayer) ?: throw IllegalArgumentException("Player not found")
-        val vote = Vote (binary = binary, forPlayer = forPlayer)
+
+        var forPlayerData: Player = Player("", GameClass(""), true, "", "");
+        if (forPlayer != null) {
+            forPlayerData = playerService.getPlayer(forPlayer) ?: throw IllegalArgumentException("Player not found")
+        }
+
+        val vote = Vote (binary = binary, forPlayer = forPlayerData, forOption = forOption)
         votes[byPlayer] = vote
         log.info("Added vote by player {}", byPlayer)
         return vote

@@ -5,8 +5,9 @@ import type { Vote } from '../models';
 
 export interface AddVoteRequest {
   byPlayer: string;
-  binary?: boolean | null;
-  forPlayer?: string | null;
+  binary?: boolean;
+  forPlayer?: string;
+  forOption?: string;
 }
 
 export default class VoteClient {
@@ -21,9 +22,9 @@ export default class VoteClient {
    * be supplied. Returns the persisted {@link Vote} on success.
    */
   async addVote(req: AddVoteRequest): Promise<Vote> {
-    const { byPlayer, binary = null, forPlayer = null } = req;
-    if (binary === null && forPlayer === null) {
-      throw new Error('Either binary or forPlayer must be provided when casting a vote');
+    const { byPlayer, binary = null, forPlayer = null, forOption = null } = req;
+    if (binary === null && forPlayer === null && forOption === null) {
+      throw new Error('Either binary, forPlayer or forOption must be provided when casting a vote');
     }
     const response = await fetch(`${this.baseUrl}/api/votes`, {
       method: 'POST',
@@ -31,7 +32,7 @@ export default class VoteClient {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ byPlayer, binary, forPlayer }),
+      body: JSON.stringify({ byPlayer, binary, forPlayer, forOption }),
     });
     if (!response.ok) {
       throw new Error(`Failed to add vote: ${response.status} ${response.statusText}`);

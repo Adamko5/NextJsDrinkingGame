@@ -3,11 +3,18 @@
 import React, { useEffect, useState } from 'react';
 import styles from './StoryTelling.module.css';
 import DisplayStoryLine from './components/DisplayStoryLine';
-import story from './story';
 import Button from '@/components/general/Button';
 import { lobbyClient } from '@/client/api';
+import { StoryLine } from '../models/StoryLineModels';
 
-export default function StoryTelling() {
+export interface StoryTellingProps {
+  inputStory: StoryLine[];
+}
+
+var story: StoryLine[] = [];
+
+const StoryTelling1: React.FC<StoryTellingProps>= ({ inputStory }) =>{
+  story = inputStory;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showButton, setShowButton] = useState(false);
 
@@ -42,9 +49,11 @@ export default function StoryTelling() {
 
       {showButton && (
         <div className={styles.buttonContainer}>
-          <Button label="Start Voting" onClick={handleStartVoting} />
+          <Button label="Continue" onClick={handleStartVoting} />
         </div>
       )}
     </div>
   );
 }
+
+export default StoryTelling1;

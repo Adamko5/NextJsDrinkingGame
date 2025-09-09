@@ -1,0 +1,24 @@
+/*
+  Styles for the server screen container.  Similar to the client
+  container but uses a slightly different pattern to subtly
+  distinguish server views.  The card remains centred and
+  constrains the screen’s width.
+*/
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Required for absolutely positioning the video background */
+}
+
+.videoBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}

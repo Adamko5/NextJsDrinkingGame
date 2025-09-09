@@ -91,10 +91,15 @@ const ClassPicker: React.FC<ClassPickerProps> = ({
       <div
         className={`${styles.card} ${value === current.name ? styles.selected : ''}`}
         onClick={handleSelect}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'pointer', borderColor: current.difficulty.color }}
       >
         <img className={styles.image} src={current.imageSrc} alt={current.name} />
-        <Label className={styles.labelClass}>{current.name}</Label>
+        <Label
+          className={styles.labelClass}
+          style={{ color: current.difficulty.color, fontWeight: 'bold' }}
+        >
+          {current.name}
+        </Label>
         <Label className={styles.label}>{current.description}</Label>
       </div>
       <button

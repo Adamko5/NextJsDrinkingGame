@@ -14,11 +14,15 @@
   align-items: center;
   justify-content: center;
   color: var(--text);
+  padding: 1rem;
 }
 
 .card {
-  width: 100%;
-  max-width: 28rem;
+  border: 2px solid var(--blue-300);
+  padding: 1rem;
+  border-radius: 1rem;
+  background: var(--bg)
+
 }
 
 .title {
