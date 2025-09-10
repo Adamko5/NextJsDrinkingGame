@@ -50,3 +50,28 @@ export function matchPlayersToOptions(
     };
   });
 }
+
+export function isVoteConcluded(snapshot: Snapshot | null): boolean {
+  if (!snapshot) return false;
+
+  const totalPlayers = snapshot.players.length;
+  const votesCast = Object.keys(snapshot.votes).length;
+  if (votesCast === totalPlayers) return true;
+
+  return false;
+}
+
+export function getWinningOption(votes: VoteOptionsWithPlayersAndResult[]): VoteOptionsWithPlayersAndResult {
+  const maxScore = Math.max(...votes.map(vote => vote.score));
+  const winningVotes = votes.filter(vote => vote.score === maxScore && maxScore > 0);
+
+  var winningVote = winningVotes[0];
+
+  if (winningVotes.length !== 1) {
+    const randomIndex = Math.floor(Math.random() * winningVotes.length);
+    winningVote = winningVotes[randomIndex];
+  }
+  winningVote.voteOption.position.x = 50;
+  winningVote.voteOption.position.y = 50;
+  return winningVote;
+}

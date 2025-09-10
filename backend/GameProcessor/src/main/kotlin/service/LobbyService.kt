@@ -18,6 +18,11 @@ class LobbyService {
         log.info("Lobby advanced phase to {}", currentLobby?.phase)
     }
 
+    fun setPhaseTo(setPhaseTo: Int) {
+        currentLobby?.phase = setPhaseTo;
+        log.info("Lobby phase set to {}", currentLobby?.phase)
+    }
+
     fun startGame() {
         val lobby = getLobby() ?: throw IllegalStateException("Lobby does not exist")
         if (lobby.status == LobbyStatus.LOBBY) {

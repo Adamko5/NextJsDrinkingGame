@@ -18,6 +18,7 @@ const DisplayVote: React.FC<DisplayVoteProps> = ({ vote, allVotes }) => {
       style={{
         left: `${voteOption.position.x}%`,
         top: `${voteOption.position.y}%`,
+        transform: "translate(-50%, -50%)",
       }}
     >
       <Label className={styles.label}>{voteOption.text}</Label>

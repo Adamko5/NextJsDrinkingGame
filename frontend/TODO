@@ -1,6 +1,6 @@
 TODO list:
-1. Implement the todo in src/app/TODO
-2. Make a new screen where the players vote for a leader.
+1. Language toggle! Make 1 file for ALL dialogue. The file will have a sk/eng equivalent. Story.txt will be imported by all. There will be 2 versions: Story_sk.txt and Story_eng.txt. Just copy and rename the correct one.
+2. Difficulty selector at the Home page of the server. Adjust backend, so the difficulty can be changed and stored in the Lobby.
 
 
 Notes and implementation rules:
@@ -12,4 +12,8 @@ Notes and implementation rules:
 Refactoring & improvements:
 - These are the backlog. This should be completely ignored for the time being.
 
-1. /backend/GameProcessor/src/main/resources/TODO
+1. Difficulty scaling = more than HP
+Scale puzzle complexity, timer leniency, enemy mechanics (e.g., extra add spawns), and number of correct answers required—not just health bars.
+2. /backend/GameProcessor/src/main/resources/TODO
+3. AI Trial fairness + guardrails
+Filter duplicates, and show a visible “resistance wheel” so players understand why the AI scored a spell well or poorly.

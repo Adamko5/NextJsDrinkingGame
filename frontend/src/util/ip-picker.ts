@@ -11,6 +11,6 @@ export function pickLanIp(): string {
       }
     }
   }
-  // return 'localhost';
-  return '192.168.137.1';
+  return 'localhost';
+  // return '192.168.137.1';
 }

@@ -47,4 +47,9 @@ export const phaseMap: Record<number, PhaseScreens> = {
     server: VotingPathIntro,
     backgroundImage: 'backgrounds/forest_splitting_path.png',
   },
+  4: {
+    client: ClientBlankScreen,
+    server: ServerBlankScreen,
+    backgroundImage: 'backgrounds/creepy_forest_intro.png',
+  },
 };
