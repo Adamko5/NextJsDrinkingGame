@@ -7,7 +7,6 @@ import React from 'react';
 // Import the Router and SnapshotProvider.  The Router exposes the
 // different screens based on the current game phase and the role.
 import Router from '../src/app/router';
-import { SnapshotProvider } from '../src/app/state/SnapshotContext';
 
 /**
  * ServerPage renders the game for the host/server role.  It wraps the
@@ -17,8 +16,6 @@ import { SnapshotProvider } from '../src/app/state/SnapshotContext';
  */
 export default function ServerPage() {
   return (
-    <SnapshotProvider>
-      <Router role="server" />
-    </SnapshotProvider>
+    <Router role="server" />
   );
 }

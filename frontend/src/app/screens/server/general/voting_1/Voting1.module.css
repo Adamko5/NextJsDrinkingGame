@@ -22,3 +22,10 @@
   color: var(--cyan-400);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
 }
+
+.nextButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}

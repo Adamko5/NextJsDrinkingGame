@@ -9,7 +9,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 4rem;
   /* Provide a default player colour for graceful fallback */
   --player-color: var(--blue-300);
 }
@@ -20,8 +19,6 @@
   circle remains coloured.
 */
 .avatar {
-  width: 3rem;
-  height: 3rem;
   border-radius: 50%;
   background-color: var(--player-color);
   display: flex;
@@ -50,7 +47,6 @@
 .name {
   font-size: 0.75rem;
   text-align: center;
-  max-width: 4rem;
   word-break: break-word;
   color: var(--player-color);
 }

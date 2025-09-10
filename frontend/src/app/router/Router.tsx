@@ -1,10 +1,11 @@
 "use client";
 
 import React, { Suspense } from 'react';
-import { SnapshotContextValue, useSnapshot } from '../state/SnapshotContext';
+import { SnapshotContextValue, SnapshotProvider, useSnapshot } from '../state/SnapshotContext';
 import { phaseMap, PhaseScreens, Role } from './phaseMap';
 import ClientContainer from './screen_containers/client/client';
 import ServerContainer from './screen_containers/server/server';
+import { CookieProvider } from '../state/CookieManager';
 
 export interface RouterProps {
   role: Role;

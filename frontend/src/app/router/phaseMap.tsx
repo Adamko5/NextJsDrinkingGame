@@ -14,6 +14,7 @@ import ServerBlankScreen from '../screens/server/blank/BlankScreen';
 import StoryTellingIntro from '../screens/server/story/intro/Intro';
 import VotingPathIntro from '../screens/server/voting/intro/Intro';
 import ClientVotingPathIntro from '../screens/client/voting/Intro';
+import BlankScreen from '../screens/server/blank/BlankScreen';
 
 export type Role = 'client' | 'server';
 

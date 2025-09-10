@@ -12,6 +12,8 @@ export interface DisplayPlayerProps {
    * including their gameClass and colour information.
    */
   player: Player;
+  width?: string;
+  height?: string;
 }
 
 /**
@@ -22,7 +24,7 @@ export interface DisplayPlayerProps {
  * player’s game class does not provide an image the avatar
  * remains an empty coloured circle.
  */
-const DisplayPlayer: React.FC<DisplayPlayerProps> = ({ player }) => {
+const DisplayPlayer: React.FC<DisplayPlayerProps> = ({ player, width, height }) => {
   // Normalise colour codes – prefix a hash if not already present.
   const formattedColor = player.color?.startsWith('#')
     ? player.color
@@ -38,7 +40,7 @@ const DisplayPlayer: React.FC<DisplayPlayerProps> = ({ player }) => {
         '--player-color': formattedColor || undefined,
       } as React.CSSProperties}
     >
-      <div className={styles.avatar}>
+      <div className={styles.avatar} style={{width: width || '3rem', height: height || '3rem'}}>
         <img
           src={getClassByName(player.gameClass.name)?.imageSrc}
           alt={player.name}

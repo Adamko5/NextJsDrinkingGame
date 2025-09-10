@@ -5,7 +5,6 @@
 
 import React from 'react';
 import Router from '../src/app/router';
-import { SnapshotProvider } from '../src/app/state/SnapshotContext';
 import { CookieProvider } from '@/app/state/CookieManager';
 
 /**
@@ -16,10 +15,8 @@ import { CookieProvider } from '@/app/state/CookieManager';
  */
 export default function ClientPage() {
   return (
-    <SnapshotProvider>
-      <CookieProvider>
-        <Router role="client" />
-      </CookieProvider>
-    </SnapshotProvider>
+    <CookieProvider>
+      <Router role="client" />
+    </CookieProvider>
   );
 }

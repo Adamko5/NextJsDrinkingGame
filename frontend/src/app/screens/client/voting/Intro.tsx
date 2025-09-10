@@ -1,6 +1,6 @@
 "use client";
 
-import { optionsLeftRight } from "@/app/screens/general/voting/Intro";
+import { optionsLeftRight } from "@/util/voting";
 import ClientVoting1 from "../general/voting_1/Voting1";
 
 export default function ClientVotingPathIntro() {  

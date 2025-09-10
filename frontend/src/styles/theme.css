@@ -47,6 +47,7 @@
   /* Neutrals – a grey scale for backgrounds and text.  We pick neutral
      shades with a slight blue undertone to harmonise with the palette. */
   --neutral-50:  #f8fafc;
+  --neutral-50-trans:  #ffffff;
   --neutral-100: #f1f5f9;
   --neutral-200: #e2e8f0;
   --neutral-300: #cbd5e1;

@@ -11,11 +11,7 @@ import React from 'react';
 // defined in the theme will not be applied to module styles.  See
 // `frontend/src/styles/globals.css` for details.
 import '../src/styles/globals.css';
-
-// Import the SnapshotProvider from the app's state context.  The
-// relative import assumes this file lives in `frontend/pages` and the
-// context lives in `frontend/src/app/state`.
-import { SnapshotProvider } from '../src/app/state/SnapshotContext';
+import { SnapshotProvider } from '@/app/state/SnapshotContext';
 
 /**
  * The custom App component is used by Next.js to initialize pages. By
