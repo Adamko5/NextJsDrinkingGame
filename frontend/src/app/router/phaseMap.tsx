@@ -15,6 +15,7 @@ import StoryTellingIntro from '../screens/server/story/intro/Intro';
 import VotingPathIntro from '../screens/server/voting/intro/Intro';
 import ClientVotingPathIntro from '../screens/client/voting/Intro';
 import BlankScreen from '../screens/server/blank/BlankScreen';
+import DrunkWizardSplittingPath from '../screens/server/story/DrunkWizardSplittingPath/DrunkWizardSplittingPath';
 
 export type Role = 'client' | 'server';
 
@@ -49,7 +50,12 @@ export const phaseMap: Record<number, PhaseScreens> = {
   },
   4: {
     client: ClientBlankScreen,
+    server: DrunkWizardSplittingPath,
+    backgroundImage: 'backgrounds/DrunkWizardSplittingPath.png',
+  },
+  5: {
+    client: ClientBlankScreen,
     server: ServerBlankScreen,
-    backgroundImage: 'backgrounds/creepy_forest_intro.png',
+    backgroundImage: 'backgrounds/WitchitaDeceptiaForest.png',
   },
 };

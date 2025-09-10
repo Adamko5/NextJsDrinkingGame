@@ -9,6 +9,7 @@ import { SnapshotContextValue, useSnapshot } from '@/app/state/SnapshotContext';
 import { getWinningOption, isVoteConcluded, matchPlayersToOptions, VoteOption, VoteOptionsWithPlayersAndResult } from '@/util/voting';
 import DisplayVote from './components/DisplayVote';
 import { lobbyClient } from '@/client/api';
+import { handleAdvancePhase } from '@/util/util';
 
 interface ServerVoting1Props {
   options: VoteOption[];
@@ -22,16 +23,8 @@ const ServerVoting1: React.FC<ServerVoting1Props> = ({ options }) => {
 
   const effectiveVoteEnded = voteConcludedBySystem || voteEndedManually;
 
-  const RESULT_DISPLAY_SECONDS = 20;
+  const RESULT_DISPLAY_SECONDS = 5;
   const [countdown, setCountdown] = useState<number>(RESULT_DISPLAY_SECONDS);
-
-  const handleAdvancePhase = async () => {
-    try {
-      await lobbyClient.advancePhase();
-    } catch (error) {
-      console.error('Failed to advance phase:', error);
-    }
-  };
 
   useEffect(() => {
     if (effectiveVoteEnded) {
