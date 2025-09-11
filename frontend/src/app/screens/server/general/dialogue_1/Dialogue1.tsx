@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import styles from './Dialogue1.module.css';
 import { Dialogue, DialogueLine } from '@/constants/dialogue';
 import Button from '../../../../../components/general/Button';
-import { handleAdvancePhase } from '@/util/util';
 import Label from '@/components/general/Label';
 
 interface Dialogue1Props {
@@ -13,30 +12,35 @@ interface Dialogue1Props {
 }
 
 const DEFAULT_DURATION = 3000;
+const FADE_MS = 300; // fade in/out duration in ms
 
 const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) => {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [textVisible, setTextVisible] = useState(false);
   const timerRef = useRef<number | null>(null);
+  const fadeTimerRef = useRef<number | null>(null);
   const completedRef = useRef(false);
   const [showContinueButton, setShowContinueButton] = useState(false);
 
   const lines = dialogue.dialogueLines || [];
 
-  // helper to build effective line with defaults from dialogue
+  // build effective line (dialogue-level defaults are expected to be spread into each line in the data)
   const buildEffective = (line?: DialogueLine) => {
     const defaults = {
-      characterImage: dialogue.characterImage,
-      imageSize: dialogue.imageSize,
-      durationMs: dialogue.durationMs,
-      position: dialogue.position,
-      textPosition: dialogue.textPosition,
-      textColor: dialogue.textColor,
-      textBackgroundColor: dialogue.textBackgroundColor,
-      animateIn: dialogue.animateIn,
-    } as any;
+      characterImage: undefined,
+      imageSize: undefined,
+      durationMs: DEFAULT_DURATION,
+      position: { x: 50, y: 50 },
+      textPosition: { x: 0, y: -10 },
+      textColor: '#fff',
+      textBackgroundColor: 'rgba(0,0,0,0.6)',
+      animateInImage: false,
+      animateInText: false,
+      textSize: undefined,
+    } as const;
 
-    return { ...defaults, ...(line || {}) } as Required<Partial<DialogueLine & typeof defaults>>;
+    return { ...defaults, ...(line || {}) } as DialogueLine & typeof defaults;
   };
 
   useEffect(() => {
@@ -44,51 +48,75 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
       window.clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+    if (fadeTimerRef.current) {
+      window.clearTimeout(fadeTimerRef.current);
+      fadeTimerRef.current = null;
+    }
 
+    // showing a regular line
     if (index < lines.length) {
       const current = buildEffective(lines[index]);
-
-      setVisible(false);
-      const raf = requestAnimationFrame(() => setVisible(true));
-
+      setShowContinueButton(false);
+      const isLastAndKept = dialogue.keepLastDisplayed && index === lines.length - 1;
+      // prepare text animation (if enabled)
       const duration = current.durationMs ?? DEFAULT_DURATION;
-      timerRef.current = window.setTimeout(() => {
-        setIndex((i) => i + 1);
-      }, duration);
+      if (current.animateInText) {
+        // fade in immediately
+        setTextVisible(true);
+        // schedule fade out slightly before advancing
+        if (!isLastAndKept) {
+          const fadeStart = Math.max(0, duration - FADE_MS);
+          fadeTimerRef.current = window.setTimeout(() => setTextVisible(false), fadeStart);
+        }
+      } else {
+        setTextVisible(true);
+      }
+
+      // show image/text container immediately
+      setVisible(true);
+
+      timerRef.current = window.setTimeout(() => setIndex(i => i + 1), duration);
 
       return () => {
-        cancelAnimationFrame(raf);
         if (timerRef.current) {
           window.clearTimeout(timerRef.current);
           timerRef.current = null;
+        }
+        if (fadeTimerRef.current) {
+          window.clearTimeout(fadeTimerRef.current);
+          fadeTimerRef.current = null;
         }
       };
     }
 
+    // finished lines
     if (index === lines.length) {
-      if (!dialogue.characterImage) {
-        if (!completedRef.current) {
-          completedRef.current = true;
-          onDialogueComplete?.();
-        }
-        return;
+      if (dialogue.keepLastDisplayed && lines.length > 0) {
+        // immediately show final image and continue button
+        setVisible(true);
+        setTextVisible(true);
+        setShowContinueButton(true);
+
+        return () => {
+          if (timerRef.current) {
+            window.clearTimeout(timerRef.current);
+            timerRef.current = null;
+          }
+          if (fadeTimerRef.current) {
+            window.clearTimeout(fadeTimerRef.current);
+            fadeTimerRef.current = null;
+          }
+        };
       }
 
-      setVisible(false);
-      const raf = requestAnimationFrame(() => setVisible(true));
-      setShowContinueButton(true);
-
-      return () => {
-        cancelAnimationFrame(raf);
-        if (timerRef.current) {
-          window.clearTimeout(timerRef.current);
-          timerRef.current = null;
-        }
-      };
+      if (!completedRef.current) {
+        completedRef.current = true;
+        onDialogueComplete?.();
+      }
     }
 
     return;
-  }, [index]);
+  }, [index, dialogue.keepLastDisplayed]);
 
   const handleContinue = () => {
     if (!completedRef.current) {
@@ -96,87 +124,93 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
       setShowContinueButton(false);
       onDialogueComplete?.();
     }
-    setIndex((i) => i + 1);
+    if (timerRef.current) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (fadeTimerRef.current) {
+      window.clearTimeout(fadeTimerRef.current);
+      fadeTimerRef.current = null;
+    }
+    setIndex(i => i + 1);
   };
 
-  if (index > lines.length) return null;
+  // determine effectiveLine to render (either current line or last line for keepLastDisplayed)
+  let effectiveLine: (DialogueLine & { durationMs?: number }) | undefined;
+  let isFinalImageStage = false;
 
   if (index < lines.length) {
-    const current = buildEffective(lines[index]);
-
-    const charPos = current.position ?? { x: 50, y: 50 };
-    const textPos = current.textPosition ?? { x: 0, y: -10 };
-
-    const imgLeft = `${charPos.x}%`;
-    const imgTop = `${charPos.y}%`;
-
-    const bubbleLeft = `calc(${charPos.x}% + ${textPos.x}%)`;
-    const bubbleTop = `calc(${charPos.y}% + ${textPos.y}%)`;
-
-    const imgSrc = current.characterImage ? `/${current.characterImage}` : undefined;
-
-    const imgSize = current.imageSize;
-    const imgStyle: React.CSSProperties = {
-      left: imgLeft,
-      top: imgTop,
-      ...(imgSize ? { width: `${imgSize.width}%`, height: `${imgSize.height}%` } : {}),
-    };
-
-    const lineClass = [styles.line];
-    if (current.animateIn) lineClass.push(styles.animateIn);
-    if (visible) lineClass.push(styles.visible);
-
-    // TODO increase styles.text size, change color
-    // TODO animate in the imaget too
-    // Make the animation better
-
-    return (
-      <div className={styles.container}>
-        {imgSrc && (
-          <img
-            src={imgSrc}
-            alt="character"
-            className={styles.character}
-            style={imgStyle}
-            draggable={false}
-          />
-        )}
-
-        <div
-          className={lineClass.join(' ')}
-          style={{ left: bubbleLeft, top: bubbleTop, color: current.textColor ?? '#fff', background: current.textBackgroundColor ?? 'rgba(0,0,0,0.6)' }}
-        >
-          <Label className={styles.text}>{current.text}</Label>
-        </div>
-      </div>
-    );
+    effectiveLine = buildEffective(lines[index]);
+  } else if (dialogue.keepLastDisplayed && lines.length > 0 && index === lines.length) {
+    effectiveLine = buildEffective(lines[lines.length - 1]);
+    isFinalImageStage = true;
   }
 
-  const finalImgSrc = dialogue.characterImage ? `/${dialogue.characterImage}` : undefined;
-  const finalPos = dialogue.position ?? { x: 50, y: 50 };
-  const finalSize = dialogue.imageSize;
+  // if nothing to render, return null
+  if (!effectiveLine && index > lines.length) return null;
 
-  const finalStyle: React.CSSProperties = {
-    left: `${finalPos.x}%`,
-    top: `${finalPos.y}%`,
-    ...(finalSize ? { width: `${finalSize.width}%`, height: `${finalSize.height}%` } : {}),
+  const imgSrc = effectiveLine?.characterImage ? `/${effectiveLine.characterImage}` : undefined;
+  const charPos = effectiveLine?.position ?? { x: 50, y: 50 };
+  const textPos = effectiveLine?.textPosition ?? { x: 0, y: -10 };
+
+  const imgLeft = `${charPos.x}%`;
+  const imgTop = `${charPos.y}%`;
+  const bubbleLeft = `calc(${charPos.x}% + ${textPos.x}%)`;
+  const bubbleTop = `calc(${charPos.y}% + ${textPos.y}%)`;
+
+  const imgSize = effectiveLine?.imageSize as { width: number; height: number } | undefined;
+  const imgStyle: React.CSSProperties = {
+    left: imgLeft,
+    top: imgTop,
+    ...(imgSize ? { width: `${imgSize.width}%`, height: `${imgSize.height}%` } : {}),
+  };
+
+  const lineClass = [styles.line];
+
+  const charClass = [styles.character];
+
+  const showBubble = !!effectiveLine?.text;
+
+  const labelStyle: React.CSSProperties = {
+    color: effectiveLine?.textColor ?? '#fff',
+    fontSize: effectiveLine?.textSize ? `${effectiveLine.textSize}px` : undefined,
+    // allow overriding other text styles in future
   };
 
   return (
     <div className={styles.container}>
-      {finalImgSrc && (
+      {imgSrc && (
         <img
-          src={finalImgSrc}
+          key={isFinalImageStage ? `final-${index}` : `char-${index}`}
+          src={imgSrc}
           alt="character"
-          className={styles.character}
-          style={finalStyle}
+          className={charClass.join(' ')}
+          style={imgStyle}
           draggable={false}
         />
       )}
 
+      {showBubble && (
+        <div
+          className={lineClass.join(' ')}
+          style={{
+            left: bubbleLeft,
+            top: bubbleTop,
+            background: effectiveLine?.textBackgroundColor ?? 'rgba(0,0,0,0.6)',
+            // animate opacity for text fade in/out; if animateInText is disabled, keep fully visible
+            opacity: effectiveLine?.animateInText ? (textVisible ? 1 : 0) : 1,
+            transition: effectiveLine?.animateInText ? `opacity ${FADE_MS}ms ease` : undefined,
+          }}
+        >
+          <Label className={styles.text} style={labelStyle}>
+            {effectiveLine?.text}
+          </Label>
+        </div>
+      )}
+
       {showContinueButton && (
         <div className={styles.buttonWrap}>
-          <Button label="Continue" onClick={handleAdvancePhase} />
+          <Button label="Continue" onClick={handleContinue} />
         </div>
       )}
     </div>

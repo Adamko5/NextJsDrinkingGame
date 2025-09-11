@@ -6,45 +6,37 @@
 
 .character {
   position: absolute;
+  left: 50%;
+  top: 50%;
   transform: translate(-50%, -50%);
-  max-width: 30%;
-  max-height: 60%;
   user-select: none;
   pointer-events: none;
+  object-fit: contain;
+  opacity: 1;
+  z-index: 55;
 }
 
 .line {
   position: absolute;
   transform: translate(-50%, -100%);
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 14px 18px;
+  border-radius: 10px;
   max-width: 50%;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  opacity: 0;
-  transition: opacity 300ms ease, transform 300ms ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
   z-index: 60;
-}
-
-.line.visible {
-  opacity: 1;
-}
-
-.line.animateIn {
-  transform: translate(-50%, -110%) scale(0.98);
-}
-
-.line.animateIn.visible {
-  transform: translate(-50%, -100%) scale(1);
 }
 
 .text {
   white-space: pre-wrap;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  color: #fff;
 }
 
 .buttonWrap {
   position: absolute;
-  right: 16px;
-  bottom: 16px;
+  right: 50%;
+  top: 40%;
   z-index: 70;
 }
 
@@ -57,4 +49,43 @@
     max-width: 80%;
     padding: 10px 12px;
   }
+
+  .text {
+    font-size: 1rem;
+  }
+}
+
+/* image phases */
+.character.fadeIn {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.96);
+}
+.character.hold {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.character.fadeOut {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.96);
+}
+
+/* bubble phases */
+.line.fadeIn {
+  opacity: 0;
+  transform: translate(-50%, -100%) scale(0.96);
+}
+.line.hold {
+  opacity: 1;
+  transform: translate(-50%, -100%) scale(1);
+}
+.line.fadeOut {
+  opacity: 0;
+  transform: translate(-50%, -100%) scale(0.96);
+}
+
+/* ensure transitions apply */
+.character,
+.line {
+  transition-property: opacity, transform;
+  transition-timing-function: cubic-bezier(.2,.9,.2,1);
 }

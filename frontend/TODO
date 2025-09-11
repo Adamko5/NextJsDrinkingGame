@@ -1,6 +1,7 @@
 TODO list:
 1. Language toggle! Make 1 file for ALL dialogue. The file will have a sk/eng equivalent. Story.txt will be imported by all. There will be 2 versions: Story_sk.txt and Story_eng.txt. Just copy and rename the correct one.
 2. Difficulty selector at the Home page of the server. Adjust backend, so the difficulty can be changed and stored in the Lobby.
+3. DIALOGUE image animation isnt happening!!!
 
 
 Notes and implementation rules:

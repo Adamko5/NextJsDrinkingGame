@@ -1,0 +1,51 @@
+.container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+}
+
+.topCurtain,
+.bottomCurtain {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50vh;
+  background-color: #000;
+  transform: translateY(0);
+  transition: ease;
+  z-index: 70;
+  pointer-events: auto; 
+}
+
+.topCurtain {
+  top: 0;
+  transform: translateY(0%);
+}
+
+.bottomCurtain {
+  bottom: 0;
+  transform: translateY(0%);
+}
+
+.topCurtain.moved {
+  transform: translateY(-100%);
+}
+
+.bottomCurtain.moved {
+  transform: translateY(100%);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background-color: #000;
+  opacity: 1;
+  transition-property: opacity;
+  transition: ease;
+  z-index: 65;
+}
+
+.overlay.moved {
+  opacity: 0;
+}

@@ -10,6 +10,7 @@ import { getWinningOption, isVoteConcluded, matchPlayersToOptions, VoteOption, V
 import DisplayVote from './components/DisplayVote';
 import { lobbyClient } from '@/client/api';
 import { handleAdvancePhase } from '@/util/util';
+import CurtainUp from '../video_effects/CurtainUp';
 
 interface ServerVoting1Props {
   options: VoteOption[];
@@ -23,8 +24,10 @@ const ServerVoting1: React.FC<ServerVoting1Props> = ({ options }) => {
 
   const effectiveVoteEnded = voteConcludedBySystem || voteEndedManually;
 
-  const RESULT_DISPLAY_SECONDS = 5;
+  const RESULT_DISPLAY_SECONDS = 3;
   const [countdown, setCountdown] = useState<number>(RESULT_DISPLAY_SECONDS);
+  const [showCurtainUp, setShowCurtainUp] = useState(false);
+  
 
   useEffect(() => {
     if (effectiveVoteEnded) {
@@ -32,7 +35,7 @@ const ServerVoting1: React.FC<ServerVoting1Props> = ({ options }) => {
       const interval = setInterval(() => {
         setCountdown(prev => {
           if (prev < 1) {
-            handleAdvancePhase();
+            setShowCurtainUp(true);
             clearInterval(interval);
             return 0;
           }
@@ -67,6 +70,9 @@ const ServerVoting1: React.FC<ServerVoting1Props> = ({ options }) => {
             <DisplayVote key={index} vote={vote} allVotes={votes} />
           ))}
         </>
+      )}
+      {showCurtainUp && (
+        <CurtainUp onEffectEnded={handleAdvancePhase} />
       )}
     </div>
   );

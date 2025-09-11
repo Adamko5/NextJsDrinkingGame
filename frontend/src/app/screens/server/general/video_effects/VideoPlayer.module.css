@@ -1,0 +1,73 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1000ms ease;
+  z-index: 20;
+}
+
+.overlayActive {
+  pointer-events: auto;
+}
+
+.dialogueWrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 50;
+}
+
+/* cinematic letterbox bars */
+.topBar,
+.bottomBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 15%;
+  background-color: #000;
+  transition: transform 800ms ease;
+  z-index: 40; /* above overlay, below dialogue */
+}
+
+.topBar {
+  top: 0;
+  background-color: #000;
+  transform: translateY(-100%); /* hidden above by default */
+}
+
+.bottomBar {
+  bottom: 0;
+  background-color: #000;
+  transform: translateY(100%); /* hidden below by default */
+}
+
+.barActive.topBar,
+.topBar.barActive {
+  transform: translateY(0);
+}
+
+.barActive.bottomBar,
+.bottomBar.barActive {
+  transform: translateY(0);
+}
