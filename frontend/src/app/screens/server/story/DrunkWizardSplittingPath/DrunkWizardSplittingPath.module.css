@@ -37,37 +37,3 @@
   bottom: 0;
   z-index: 50;
 }
-
-/* cinematic letterbox bars */
-.topBar,
-.bottomBar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 15%;
-  background-color: #000;
-  transition: transform 800ms ease;
-  z-index: 40; /* above overlay, below dialogue */
-}
-
-.topBar {
-  top: 0;
-  background-color: #000;
-  transform: translateY(-100%); /* hidden above by default */
-}
-
-.bottomBar {
-  bottom: 0;
-  background-color: #000;
-  transform: translateY(100%); /* hidden below by default */
-}
-
-.barActive.topBar,
-.topBar.barActive {
-  transform: translateY(0);
-}
-
-.barActive.bottomBar,
-.bottomBar.barActive {
-  transform: translateY(0);
-}

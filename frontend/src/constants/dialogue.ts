@@ -118,3 +118,75 @@ export const DrunkWizardSplittingPathDialogue2: Dialogue = {
     ],
     keepLastDisplayed: true
 };
+
+const WitchitaDeceptia1DialogueCommon: DialogueLine = {
+    textPosition: { x: 0, y: 0 },
+    characterImage: 'characters/witchita_deceptia/WitchitaDeceptia.png',
+    animateInText: true,
+    textSize: textSizes.large,
+    imageSize: { width: 35, height: 35 },
+    position: { x: 30, y: 54 },
+};
+export const WitchitaDeceptia1Dialogue: Dialogue = {
+    dialogueLines: [
+        {
+            ...WitchitaDeceptia1DialogueCommon,
+            text: '"Ooooh, who do we have here?"',
+            durationMs: 3000,
+            animateInImage: true,
+            imageSize: { width: 15, height: 15 },
+            position: { x: 50, y: 50 },
+            textSize: textSizes.small,
+            textPosition: { x: -1, y: -7 },
+        },
+        {
+            ...WitchitaDeceptia1DialogueCommon,
+            text: '"My name is Witchita Deceptia!"',
+            durationMs: 5000,
+            animateInImage: true,
+            imageSize: { width: 20, height: 20 },
+            position: { x: 50, y: 50 },
+            textSize: textSizes.xxlarge,
+            textPosition: { x: -1, y: -8 },
+            textColor: colors.red_slightly_dark,
+        },
+        {
+            ...WitchitaDeceptia1DialogueCommon,
+            text: '"You look strong... have you come to challenge me?"',
+            durationMs: 5000,
+            imageSize: { width: 25, height: 25 },
+            position: { x: 50, y: 50 },
+            textSize: textSizes.medium,
+            textPosition: { x: -1, y: -10 },
+        },
+        {
+            ...WitchitaDeceptia1DialogueCommon,
+            text: '"You will have to beat me, by combining alcoholic attacks!"',
+            durationMs: 5000,
+            imageSize: { width: 30, height: 30 },
+            position: { x: 50, y: 50 },
+            textSize: textSizes.large,
+            textPosition: { x: -1, y: -12 },
+        },
+        {
+            ...WitchitaDeceptia1DialogueCommon,
+            text: '"Pick the strongest among you..."',
+            durationMs: 4000,
+            imageSize: { width: 35, height: 35 },
+            position: { x: 50, y: 50 },
+            textSize: textSizes.xlarge,
+            textPosition: { x: -2, y: -15 },
+        },
+        {
+            ...WitchitaDeceptia1DialogueCommon,
+            text: '"TO FACE ME!"',
+            durationMs: 4000,
+            imageSize: { width: 45, height: 45 },
+            position: { x: 50, y: 50 },
+            textColor: colors.red_slightly_dark,
+            textSize: textSizes.massive,
+            textPosition: { x: -2, y: 0 },
+        },
+    ],
+    keepLastDisplayed: true
+};

@@ -17,6 +17,7 @@ import ClientVotingPathIntro from '../screens/client/voting/Intro';
 import BlankScreen from '../screens/server/blank/BlankScreen';
 import DrunkWizardSplittingPath from '../screens/server/story/DrunkWizardSplittingPath/DrunkWizardSplittingPath';
 import DrunkWizardSplittingPath2 from '../screens/server/story/DrunkWizardSplittingPath/DrunkWizardSplittingPath2';
+import WitchitaDeceptia1 from '../screens/server/story/WitchitaDeceptia/WitchitaDeceptia1';
 
 export type Role = 'client' | 'server';
 
@@ -61,7 +62,7 @@ export const phaseMap: Record<number, PhaseScreens> = {
   },
   6: {
     client: ClientBlankScreen,
-    server: DrunkWizardSplittingPath2,
-    backgroundImage: 'backgrounds/WitchitaDeceptiaForest-before1.png.png',
+    server: WitchitaDeceptia1,
+    backgroundImage: 'backgrounds/WitchitaDeceptiaForest-before1.png',
   },
 };

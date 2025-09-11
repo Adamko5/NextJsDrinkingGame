@@ -4,6 +4,7 @@ import { DrunkWizardSplittingPathDialogue2 } from '@/constants/dialogue';
 import Dialogue1 from '../../general/dialogue_1/Dialogue1';
 import { handleAdvancePhase } from '@/util/util';
 import CurtainDown from '../../general/video_effects/CurtainDown';
+import CurtainUp from '../../general/video_effects/CurtainUp';
 
 export default function DrunkWizardSplittingPath2() {
   const [showDialogue, setShowDialogue] = useState(false);
@@ -15,8 +16,10 @@ export default function DrunkWizardSplittingPath2() {
     setTimeout(() => setShowDialogue(true), FADE_MS + HOLD_MS);
   };
 
-  const handleDialogueComplete = () => {
-    handleAdvancePhase();
+  const [showCurtainUp, setShowCurtainUp] = useState(false);
+  
+  const handleCurtainUp = () => {
+    setShowCurtainUp(true);
   };
 
   return (
@@ -25,8 +28,12 @@ export default function DrunkWizardSplittingPath2() {
 
       {showDialogue && (
         <div className={styles.dialogueWrapper}>
-          <Dialogue1 dialogue={DrunkWizardSplittingPathDialogue2} onDialogueComplete={handleDialogueComplete} />
+          <Dialogue1 dialogue={DrunkWizardSplittingPathDialogue2} onDialogueComplete={handleCurtainUp} />
         </div>
+      )}
+
+      {showCurtainUp && (
+        <CurtainUp fadeMs={FADE_MS} holdMs={HOLD_MS} onEffectEnded={handleAdvancePhase} />
       )}
     </div>
   );

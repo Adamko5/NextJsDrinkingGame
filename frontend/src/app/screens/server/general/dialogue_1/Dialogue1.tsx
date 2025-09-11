@@ -12,7 +12,7 @@ interface Dialogue1Props {
 }
 
 const DEFAULT_DURATION = 3000;
-const FADE_MS = 300; // fade in/out duration in ms
+const FADE_MS = 300;
 
 const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) => {
   const [index, setIndex] = useState(0);
@@ -25,7 +25,6 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
 
   const lines = dialogue.dialogueLines || [];
 
-  // build effective line (dialogue-level defaults are expected to be spread into each line in the data)
   const buildEffective = (line?: DialogueLine) => {
     const defaults = {
       characterImage: undefined,
@@ -43,70 +42,61 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
     return { ...defaults, ...(line || {}) } as DialogueLine & typeof defaults;
   };
 
-  useEffect(() => {
-    if (timerRef.current) {
-      window.clearTimeout(timerRef.current);
-      timerRef.current = null;
+  const clearTimerRef = (ref: React.RefObject<number | null>) => {
+    if (ref.current) {
+      window.clearTimeout(ref.current);
+      ref.current = null;
     }
-    if (fadeTimerRef.current) {
-      window.clearTimeout(fadeTimerRef.current);
-      fadeTimerRef.current = null;
-    }
+  };
 
-    // showing a regular line
+  const clearAllTimers = () => {
+    clearTimerRef(timerRef);
+    clearTimerRef(fadeTimerRef);
+  };
+
+  const scheduleFadeOut = (delayMs: number) => {
+    clearTimerRef(fadeTimerRef);
+    fadeTimerRef.current = window.setTimeout(() => setTextVisible(false), delayMs);
+  };
+
+  const scheduleAdvance = (durationMs: number) => {
+    clearTimerRef(timerRef);
+    timerRef.current = window.setTimeout(() => setIndex(i => i + 1), durationMs);
+  };
+
+  useEffect(() => {
+    clearAllTimers();
+
     if (index < lines.length) {
       const current = buildEffective(lines[index]);
       setShowContinueButton(false);
+
       const isLastAndKept = dialogue.keepLastDisplayed && index === lines.length - 1;
-      // prepare text animation (if enabled)
       const duration = current.durationMs ?? DEFAULT_DURATION;
+
       if (current.animateInText) {
-        // fade in immediately
         setTextVisible(true);
-        // schedule fade out slightly before advancing
         if (!isLastAndKept) {
           const fadeStart = Math.max(0, duration - FADE_MS);
-          fadeTimerRef.current = window.setTimeout(() => setTextVisible(false), fadeStart);
+          scheduleFadeOut(fadeStart);
         }
       } else {
         setTextVisible(true);
       }
 
-      // show image/text container immediately
       setVisible(true);
+      scheduleAdvance(duration);
 
-      timerRef.current = window.setTimeout(() => setIndex(i => i + 1), duration);
-
-      return () => {
-        if (timerRef.current) {
-          window.clearTimeout(timerRef.current);
-          timerRef.current = null;
-        }
-        if (fadeTimerRef.current) {
-          window.clearTimeout(fadeTimerRef.current);
-          fadeTimerRef.current = null;
-        }
-      };
+      return () => clearAllTimers();
     }
 
-    // finished lines
     if (index === lines.length) {
       if (dialogue.keepLastDisplayed && lines.length > 0) {
-        // immediately show final image and continue button
         setVisible(true);
         setTextVisible(true);
         setShowContinueButton(true);
 
-        return () => {
-          if (timerRef.current) {
-            window.clearTimeout(timerRef.current);
-            timerRef.current = null;
-          }
-          if (fadeTimerRef.current) {
-            window.clearTimeout(fadeTimerRef.current);
-            fadeTimerRef.current = null;
-          }
-        };
+        return () => clearAllTimers();
       }
 
       if (!completedRef.current) {
@@ -124,18 +114,11 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
       setShowContinueButton(false);
       onDialogueComplete?.();
     }
-    if (timerRef.current) {
-      window.clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    if (fadeTimerRef.current) {
-      window.clearTimeout(fadeTimerRef.current);
-      fadeTimerRef.current = null;
-    }
+
+    clearAllTimers();
     setIndex(i => i + 1);
   };
 
-  // determine effectiveLine to render (either current line or last line for keepLastDisplayed)
   let effectiveLine: (DialogueLine & { durationMs?: number }) | undefined;
   let isFinalImageStage = false;
 
@@ -146,7 +129,6 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
     isFinalImageStage = true;
   }
 
-  // if nothing to render, return null
   if (!effectiveLine && index > lines.length) return null;
 
   const imgSrc = effectiveLine?.characterImage ? `/${effectiveLine.characterImage}` : undefined;
@@ -174,7 +156,6 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
   const labelStyle: React.CSSProperties = {
     color: effectiveLine?.textColor ?? '#fff',
     fontSize: effectiveLine?.textSize ? `${effectiveLine.textSize}px` : undefined,
-    // allow overriding other text styles in future
   };
 
   return (
@@ -197,7 +178,6 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
             left: bubbleLeft,
             top: bubbleTop,
             background: effectiveLine?.textBackgroundColor ?? 'rgba(0,0,0,0.6)',
-            // animate opacity for text fade in/out; if animateInText is disabled, keep fully visible
             opacity: effectiveLine?.animateInText ? (textVisible ? 1 : 0) : 1,
             transition: effectiveLine?.animateInText ? `opacity ${FADE_MS}ms ease` : undefined,
           }}
