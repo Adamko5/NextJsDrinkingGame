@@ -162,14 +162,15 @@ const Dialogue1: React.FC<Dialogue1Props> = ({ dialogue, onDialogueComplete }) =
     <div className={styles.container}>
       {imgSrc && (
         <img
-          key={isFinalImageStage ? `final-${index}` : `char-${index}`}
-          src={imgSrc}
-          alt="character"
-          className={charClass.join(' ')}
-          style={imgStyle}
-          draggable={false}
-        />
-      )}
+          // stable key based on image path so the element isn't remounted when index changes
+          key={effectiveLine?.characterImage ? `${isFinalImageStage ? 'final-' : 'char-'}${effectiveLine.characterImage}` : `char-${index}`}
+           src={imgSrc}
+           alt="character"
+           className={charClass.join(' ')}
+           style={imgStyle}
+           draggable={false}
+         />
+       )}
 
       {showBubble && (
         <div

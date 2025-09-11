@@ -113,6 +113,7 @@ export const DrunkWizardSplittingPathDialogue2: Dialogue = {
         {
             ...DrunkWizardSplittingPathDialogue2Common,
             text: '"That witch... is very deceptive."',
+            textColor: colors.red_slightly_dark,
             durationMs: 4000,
         },
     ],
@@ -131,7 +132,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
     dialogueLines: [
         {
             ...WitchitaDeceptia1DialogueCommon,
-            text: '"Ooooh, who do we have here?"',
+            text: '"Fresh little lambs in a thicket of lies..."',
             durationMs: 3000,
             animateInImage: true,
             imageSize: { width: 15, height: 15 },
@@ -141,7 +142,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
         },
         {
             ...WitchitaDeceptia1DialogueCommon,
-            text: '"My name is Witchita Deceptia!"',
+            text: '"Witchita Deceptia — delight for the eyes"',
             durationMs: 5000,
             animateInImage: true,
             imageSize: { width: 20, height: 20 },
@@ -152,7 +153,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
         },
         {
             ...WitchitaDeceptia1DialogueCommon,
-            text: '"You look strong... have you come to challenge me?"',
+            text: '"A drinking battle, fierce and bold"',
             durationMs: 5000,
             imageSize: { width: 25, height: 25 },
             position: { x: 50, y: 50 },
@@ -161,7 +162,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
         },
         {
             ...WitchitaDeceptia1DialogueCommon,
-            text: '"You will have to beat me, by combining alcoholic attacks!"',
+            text: '"Only one steps up — the rest on hold"',
             durationMs: 5000,
             imageSize: { width: 30, height: 30 },
             position: { x: 50, y: 50 },
@@ -170,7 +171,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
         },
         {
             ...WitchitaDeceptia1DialogueCommon,
-            text: '"Pick the strongest among you..."',
+            text: '"I duel alone — no groupies, clear?"',
             durationMs: 4000,
             imageSize: { width: 35, height: 35 },
             position: { x: 50, y: 50 },
@@ -179,12 +180,12 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
         },
         {
             ...WitchitaDeceptia1DialogueCommon,
-            text: '"TO FACE ME!"',
+            text: '"So choose your strongest, to step up here!"',
             durationMs: 4000,
             imageSize: { width: 45, height: 45 },
             position: { x: 50, y: 50 },
-            textColor: colors.red_slightly_dark,
             textSize: textSizes.massive,
+            textColor: colors.red_slightly_dark,
             textPosition: { x: -2, y: 0 },
         },
     ],
