@@ -18,6 +18,7 @@ import BlankScreen from '../screens/server/blank/BlankScreen';
 import DrunkWizardSplittingPath from '../screens/server/story/DrunkWizardSplittingPath/DrunkWizardSplittingPath';
 import DrunkWizardSplittingPath2 from '../screens/server/story/DrunkWizardSplittingPath/DrunkWizardSplittingPath2';
 import WitchitaDeceptia1 from '../screens/server/story/WitchitaDeceptia/WitchitaDeceptia1';
+import WitchitaDeceptia2 from '../screens/server/story/WitchitaDeceptia/WitchitaDeceptia2';
 
 export type Role = 'client' | 'server';
 
@@ -63,6 +64,16 @@ export const phaseMap: Record<number, PhaseScreens> = {
   6: {
     client: ClientBlankScreen,
     server: WitchitaDeceptia1,
+    backgroundImage: 'backgrounds/WitchitaDeceptiaForest-before1.png',
+  },
+  7: {
+    client: ClientBlankScreen,
+    server: WitchitaDeceptia2,
+    backgroundImage: 'backgrounds/WitchitaDeceptiaForest-before1.png',
+  },
+  8: {
+    client: ClientBlankScreen,
+    server: ServerBlankScreen,
     backgroundImage: 'backgrounds/WitchitaDeceptiaForest-before1.png',
   },
 };

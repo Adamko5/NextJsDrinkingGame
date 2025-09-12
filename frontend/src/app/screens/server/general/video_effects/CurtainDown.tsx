@@ -9,7 +9,7 @@ interface CurtainDownProps {
   onEffectEnded?: () => void;
 }
 
-const CurtainDown: React.FC<CurtainDownProps> = ({ fadeMs = 1500, holdMs = 200, onEffectEnded }) => {
+const CurtainDown: React.FC<CurtainDownProps> = ({ fadeMs = 1500, holdMs = 0, onEffectEnded }) => {
   const [overlayActive, setOverlayActive] = useState(false);
   const [curtainsIn, setCurtainsIn] = useState(false);
 

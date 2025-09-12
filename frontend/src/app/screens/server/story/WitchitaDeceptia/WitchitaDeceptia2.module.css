@@ -1,0 +1,58 @@
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.screenContainer{
+  position: relative;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.label{
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+
+.label.title{
+  top: 10%;
+  left: 50%;
+  font-size: 3rem;
+  color: red;
+  text-shadow: 0 0 20 darkred;
+}
+
+.label.rosterText{
+  top: 50%;
+  left: 50%;
+  font-size: 2rem;
+  color: var(--blue-500);
+}
+
+.roster{
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: red;
+}
+
+.button{
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.character{
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 53%;
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/lobby")
-class LobbyController(private val lobbyService: LobbyService, private val voteService: VoteService) {
+class LobbyController(private val lobbyService: LobbyService) {
 
     @GetMapping
     fun getLobby(): ResponseEntity<Lobby> {
@@ -38,7 +38,6 @@ class LobbyController(private val lobbyService: LobbyService, private val voteSe
 
     @PostMapping("/setPhaseAndClean")
     fun setPhaseTo(@RequestParam("setPhaseTo") setPhaseTo: Int): ResponseEntity<String> {
-        voteService.clearVotes()
         lobbyService.setPhaseTo(setPhaseTo)
         return ResponseEntity.status(HttpStatus.OK).body("Phase set to $setPhaseTo.")
     }

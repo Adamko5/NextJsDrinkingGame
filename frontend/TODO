@@ -18,3 +18,4 @@ Scale puzzle complexity, timer leniency, enemy mechanics (e.g., extra add spawns
 2. /backend/GameProcessor/src/main/resources/TODO
 3. AI Trial fairness + guardrails
 Filter duplicates, and show a visible “resistance wheel” so players understand why the AI scored a spell well or poorly.
+4. dialogue.ts animateInImage TODO

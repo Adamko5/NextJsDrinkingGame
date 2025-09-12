@@ -14,7 +14,7 @@
   object-fit: contain;
   opacity: 1;
   z-index: 55;
-  transition: left 1000ms ease, top 1000ms ease, opacity 200ms ease;
+  transition: left 1000ms ease, top 1000ms ease, width 1000ms ease, height 1000ms ease, opacity 200ms ease;
 }
 
 .line {

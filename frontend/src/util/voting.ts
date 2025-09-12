@@ -75,3 +75,14 @@ export function getWinningOption(votes: VoteOptionsWithPlayersAndResult[]): Vote
   winningVote.voteOption.position.y = 50;
   return winningVote;
 }
+
+export function getPlayersFromVoteKeys(snapshot: Snapshot | null) : Player[]{
+  if (!snapshot) return [];
+  const keys = Object.keys(snapshot.votes);
+  
+  const allPlayers = keys.map(key => snapshot.players.find(player => player.playerKey === key));
+
+  const onlyFoundPlayers = allPlayers.filter(player => player != undefined);
+  
+  return onlyFoundPlayers;
+}

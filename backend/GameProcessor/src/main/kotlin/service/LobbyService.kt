@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
-class LobbyService {
+class LobbyService (private val voteService: VoteService) {
     private val log = LoggerFactory.getLogger(LobbyService::class.java)
 
     private var currentLobby: Lobby = Lobby()
@@ -14,11 +14,13 @@ class LobbyService {
     fun getLobby(): Lobby? = currentLobby
 
     fun advancePhase(advanceBy: Int = 1) {
+        voteService.clearVotes()
         currentLobby?.phase += advanceBy;
         log.info("Lobby advanced phase to {}", currentLobby?.phase)
     }
 
     fun setPhaseTo(setPhaseTo: Int) {
+        voteService.clearVotes()
         currentLobby?.phase = setPhaseTo;
         log.info("Lobby phase set to {}", currentLobby?.phase)
     }

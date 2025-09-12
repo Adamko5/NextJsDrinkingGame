@@ -8,7 +8,7 @@ export interface DialogueLine {
     textColor?: string;
     textBackgroundColor?: string;
     animateInText?: boolean;
-    animateInImage?: boolean;
+    animateInImage?: boolean; // TODO currently does nothing
     textSize?: number; // in pixels
 }
 
@@ -42,7 +42,7 @@ const colors = {
 
 // DrunkWizardSplittingPathDialogueCommon provides shared defaults that are spread into each DialogueLine
 const DrunkWizardSplittingPathDialogueCommon: DialogueLine = {
-    textPosition: { x: 0, y: 0 },
+    textPosition: { x: 0, y: 10 },
     characterImage: 'characters/misc/drunk_wizard_1.png',
     animateInText: true,
     textSize: textSizes.xlarge,
@@ -51,23 +51,23 @@ export const DrunkWizardSplittingPathDialogue: Dialogue = {
     dialogueLines: [
         {
             ...DrunkWizardSplittingPathDialogueCommon,
-            imageSize: { width: 50, height: 50 },
-            position: { x: 45, y: 65 },
+            imageSize: { width: 40, height: 40 },
+            position: { x: 80, y: 65 },
             text: '"I know what you\'re thinking..."',
             durationMs: 3000,
             animateInImage: true,
         },
         {
             ...DrunkWizardSplittingPathDialogueCommon,
-            imageSize: { width: 51, height: 51 },
-            position: { x: 46, y: 66 },
+            imageSize: { width: 50, height: 50 },
+            position: { x: 70, y: 75 },
             text: '"You want to know if this path leads out of the forest."',
             durationMs: 5000,
         },
         {
             ...DrunkWizardSplittingPathDialogueCommon,
-            imageSize: { width: 52, height: 52 },
-            position: { x: 47, y: 67 },
+            imageSize: { width: 70, height: 70 },
+            position: { x: 60, y: 70 },
             text: '"I will tell you, but on one condition!"',
             durationMs: 4000,
         },
@@ -135,8 +135,8 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
             text: '"Fresh little lambs in a thicket of lies..."',
             durationMs: 3000,
             animateInImage: true,
-            imageSize: { width: 15, height: 15 },
-            position: { x: 50, y: 50 },
+            imageSize: { width: 12, height: 12 },
+            position: { x: 50, y: 45 },
             textSize: textSizes.small,
             textPosition: { x: -1, y: -7 },
         },
@@ -146,7 +146,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
             durationMs: 5000,
             animateInImage: true,
             imageSize: { width: 20, height: 20 },
-            position: { x: 50, y: 50 },
+            position: { x: 50, y: 46 },
             textSize: textSizes.xxlarge,
             textPosition: { x: -1, y: -8 },
             textColor: colors.red_slightly_dark,
@@ -156,7 +156,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
             text: '"A drinking battle, fierce and bold"',
             durationMs: 5000,
             imageSize: { width: 25, height: 25 },
-            position: { x: 50, y: 50 },
+            position: { x: 48, y: 47 },
             textSize: textSizes.medium,
             textPosition: { x: -1, y: -10 },
         },
@@ -165,7 +165,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
             text: '"Only one steps up — the rest on hold"',
             durationMs: 5000,
             imageSize: { width: 30, height: 30 },
-            position: { x: 50, y: 50 },
+            position: { x: 52, y: 48 },
             textSize: textSizes.large,
             textPosition: { x: -1, y: -12 },
         },
@@ -173,7 +173,7 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
             ...WitchitaDeceptia1DialogueCommon,
             text: '"I duel alone — no groupies, clear?"',
             durationMs: 4000,
-            imageSize: { width: 35, height: 35 },
+            imageSize: { width: 40, height: 40 },
             position: { x: 50, y: 50 },
             textSize: textSizes.xlarge,
             textPosition: { x: -2, y: -15 },
@@ -182,11 +182,11 @@ export const WitchitaDeceptia1Dialogue: Dialogue = {
             ...WitchitaDeceptia1DialogueCommon,
             text: '"So choose your strongest, to step up here!"',
             durationMs: 4000,
-            imageSize: { width: 45, height: 45 },
-            position: { x: 50, y: 50 },
+            imageSize: { width: 50, height: 50 },
+            position: { x: 50, y: 53 },
             textSize: textSizes.massive,
             textColor: colors.red_slightly_dark,
-            textPosition: { x: -2, y: 0 },
+            textPosition: { x: -2, y: 8 },
         },
     ],
     keepLastDisplayed: true
